@@ -190,20 +190,18 @@ footer p { margin: 0 0 0.4rem; max-width: 48rem; }
 .site-nav a:hover, .site-nav a:focus-visible { opacity: 1; text-decoration: underline; }
 .site-nav a[aria-current="page"] { opacity: 1; font-weight: 600; }
 .site-nav .home { font-family: var(--display); font-weight: 700; letter-spacing: 0.04em; opacity: 1; margin-right: auto; }
-/* Layout: sticky settings bar with difficulty, climate and year; below it the sections Quickstart, Chains,
-   Buildings (tiles with details, as on the Subsidies+ page), Towns and Cargo. */
+/* Layout: sticky settings bar with rules, climate and year; below it the parts of the guide as tiles on the left
+   (as the subsidies on the Subsidies+ page) and the chosen part on the right. */
 :root { --logo-bg: #6d7a2e; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --logo-bg: #8a9a3c; } }
 :root[data-theme="dark"] { --logo-bg: #8a9a3c; }
 .brand h1 .logo { background: var(--logo-bg); }
-.pill { font-family: var(--display); font-weight: 600; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--upfront); border: 1px solid var(--upfront); border-radius: 999px; padding: 0.1rem 0.6rem; }
-.jump { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; margin: 0; padding: 0; list-style: none; }
-.jump a { color: var(--tile); font-weight: 600; text-decoration: none; }
-.jump a:hover, .jump a:focus-visible { text-decoration: underline; }
-
-.page-sec { padding-block: 2rem 0.5rem; scroll-margin-top: calc(var(--bar-h, 4.5rem) + 0.5rem); }
-.page-sec > h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.7rem, 4vw, 2.2rem); line-height: 1.1; margin: 0 0 0.25rem; }
-.page-sec > .lead { margin: 0 0 1rem; color: var(--muted); max-width: 46rem; }
+.tile .icon { background: var(--paper); overflow: hidden; }
+.tile .icon img { width: 100%; height: 100%; object-fit: cover; }
+.tile .icon img.glyph { width: 2.25rem; height: 2.25rem; object-fit: contain; }
+.detail .lead { margin: 0; color: var(--muted); }
+.part-title { font-family: var(--display); font-weight: 700; font-size: clamp(1.8rem, 4.5vw, 2.4rem); line-height: 1; margin: 0; }
+.part-sub { font-family: var(--display); font-weight: 700; font-size: 1.25rem; margin: 0 0 0.4rem; }
 
 /* Quickstart: numbered steps */
 .steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; counter-reset: step; }
@@ -235,8 +233,16 @@ a.node:hover, a.node:focus-visible { border-color: var(--tile); }
 .branches { display: flex; flex-direction: column; gap: 0.4rem; }
 .branch { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 
-/* Buildings: tiles with a picture */
-.thumb-tile { width: 4.8rem; height: 3rem; border-radius: 6px; object-fit: cover; background: var(--paper); }
+/* Buildings: a strip of pictures to pick one, its details below */
+.bstrip { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 0.5rem; }
+.bpick {
+  display: flex; flex-direction: column; gap: 0.25rem; padding: 0.3rem; font: inherit; font-size: 0.85rem; line-height: 1.2; text-align: left;
+  color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer;
+}
+.bpick img { width: 100%; aspect-ratio: 8 / 5; object-fit: cover; border-radius: 5px; }
+.bpick:hover { border-color: var(--tile); }
+.bpick[aria-pressed="true"] { border-color: var(--tile); box-shadow: inset 0 0 0 1px var(--tile); font-weight: 600; }
+.bpick.off { opacity: 0.55; }
 .detail-head .picture { width: 12rem; max-width: 100%; aspect-ratio: 8 / 5; object-fit: cover; border-radius: 8px; border: 1px solid var(--rule); }
 .sec.build { --sec: var(--muted); }
 .sec.works { --sec: var(--task); }
@@ -278,14 +284,6 @@ footer a { color: inherit; }
     <h1 aria-label="Waste Industry Docs"><span class="logo" aria-hidden="true">W</span><span aria-hidden="true">aste Industry<span class="docs">Docs</span></span></h1>
     <p class="tagline">Transport Fever 3 mod: street waste bins, landfills, an incinerator and recycling.</p>
   </div>
-  <p class="intro"><span class="pill">Prototype</span> The numbers can still change between versions.</p>
-  <ul class="jump" aria-label="Sections">
-    <li><a href="#quickstart">Quickstart</a></li>
-    <li><a href="#chains">Chains</a></li>
-    <li><a href="#buildings">Buildings</a></li>
-    <li><a href="#towns">Towns and waste</a></li>
-    <li><a href="#cargo">Cargo</a></li>
-  </ul>
 </header>
 
 <div class="settings" role="region" aria-label="Game settings">
@@ -308,51 +306,13 @@ footer a { color: inherit; }
   </div>
 </div>
 
-<main class="wrap">
-  <section class="page-sec" id="quickstart" aria-labelledby="quickstart-h">
-    <h2 id="quickstart-h">Quickstart</h2>
-    <ol class="steps" id="steps"></ol>
-  </section>
-
-  <section class="page-sec" id="chains" aria-labelledby="chains-h">
-    <h2 id="chains-h">Chains</h2>
-    <p class="lead">Faded: not built yet in the chosen year, or missing in the chosen climate.</p>
-    <div class="chains" id="chain-list"></div>
-  </section>
-
-  <section class="page-sec" id="buildings" aria-labelledby="buildings-h">
-    <h2 id="buildings-h">Buildings</h2>
-    <p class="lead">All in the build menu under Road → Waste.</p>
-    <div class="list-detail">
-      <div class="tiles" id="tiles"></div>
-      <article class="detail" id="detail" aria-live="polite"></article>
-    </div>
-  </section>
-
-  <section class="page-sec" id="towns" aria-labelledby="towns-h">
-    <h2 id="towns-h">Towns and waste</h2>
-    <ul class="rules-list" id="town-rules"></ul>
-    <div class="table-scroll"><table id="town-table"></table></div>
-  </section>
-
-  <section class="page-sec" id="cargo" aria-labelledby="cargo-h">
-    <h2 id="cargo-h">Cargo</h2>
-    <p class="lead">Any bulk or universal truck, wagon or ship carries them.</p>
-    <div class="cargo-grid" id="cargo-grid"></div>
-  </section>
-
-  <section class="page-sec" id="good-to-know" aria-labelledby="know-h">
-    <h2 id="know-h">Good to know</h2>
-    <ul class="know-list">
-      <li>The game's "Supply Industry" subsidy never picks a landfill, the incinerator or a sorting plant as its target.</li>
-      <li>The mod changes saved games for good (new cargo, bins, landfills). Removing it from a save breaks the save.</li>
-      <li>Mod settings: "Town waste rules" sets how strictly towns demand bins. "Waste test mode" is only for testing: it adds test buildings, logs reports and pauses the game after six months.</li>
-    </ul>
-  </section>
+<main class="wrap list-detail">
+  <nav class="tiles" id="tiles" aria-label="Guide"></nav>
+  <article class="detail" id="detail" aria-live="polite"></article>
 </main>
 
 <footer class="wrap">
-  <p>Waste Industry is a prototype by darthbane426. Also by darthbane426: <a href="../subsidies-plus/">Subsidies+</a>, fifteen new subsidy types.</p>
+  <p>Waste Industry by darthbane426. Also by darthbane426: <a href="../subsidies-plus/">Subsidies+</a>, fifteen new subsidy types.</p>
 </footer>
 
 <script>
@@ -527,7 +487,7 @@ const TIP = {
   coverage: "Share of the town's waste made by buildings within reach of a bin. Shops and industry make twice as much waste per person as homes.",
 };
 
-const state = { risk: 1, climate: "temperate", year: 1950, open: BUILDINGS[0].id };
+const state = { risk: 1, climate: "temperate", year: 1950, part: "quickstart", open: BUILDINGS[0].id };
 
 const paperClimate = () => ["subarctic", "all"].includes(state.climate);
 const tropic = () => state.climate === "tropic";
@@ -544,7 +504,7 @@ const lookFor = b => b.looks.find(l => (!l.from || state.year >= l.from) && (!l.
 
 // ---- Quickstart
 
-function renderSteps() {
+function quickstartHtml() {
   const r = rules();
   const steps = [
     {
@@ -566,8 +526,13 @@ function renderSteps() {
       later: true,
     },
   ];
-  el("steps").innerHTML = steps.map(s =>
-    `<li${s.later ? ' class="later"' : ""}><h3>${s.title}</h3><p>${s.text}</p><small>${s.note}</small></li>`).join("");
+  return `<ol class="steps">${steps.map(s =>
+    `<li${s.later ? ' class="later"' : ""}><h3>${s.title}</h3><p>${s.text}</p><small>${s.note}</small></li>`).join("")}</ol>
+    <div><h3 class="part-sub">Good to know</h3><ul class="know-list">
+      <li>The game's "Supply Industry" subsidy never picks a landfill, the incinerator or a sorting plant as its target.</li>
+      <li>The mod changes saved games for good (new cargo, bins, landfills). Removing it from a save breaks the save.</li>
+      <li>Mod settings: "Town waste rules" sets how strictly towns demand bins. "Waste test mode" is only for testing: it adds test buildings, logs reports and pauses the game after six months.</li>
+    </ul></div>`;
 }
 
 // ---- Chains
@@ -580,7 +545,7 @@ const nodeBuilding = id => {
 const nodeCargo = id => {
   const c = CARGO[id];
   const why = missing(c);
-  return `<a class="node cargo${why ? " off" : ""}" href="#c-${id}">${img("cargo:" + id)}${c.name}${why ? ` <span class="why">${why}</span>` : ""}</a>`;
+  return `<a class="node cargo${why ? " off" : ""}" href="#cargo" data-part="cargo">${img("cargo:" + id)}${c.name}${why ? ` <span class="why">${why}</span>` : ""}</a>`;
 };
 const nodeBase = id => {
   const b = BASE[id];
@@ -591,7 +556,7 @@ const stage = nodes => `<div class="stage">${nodes.join("")}</div>`;
 const arrow = '<span class="arrow" aria-hidden="true">→</span>';
 const flow = (...stages) => `<div class="flow">${stages.join(arrow)}</div>`;
 
-function renderChains() {
+function chainsHtml() {
   const chains = [
     {
       title: "Waste",
@@ -613,26 +578,18 @@ function renderChains() {
         + `<small>Steel mills take scrap instead of iron ore (coal is still needed), glass works cullet instead of sand, paper mills recovered paper instead of sawdust.</small>`,
     },
   ];
-  el("chain-list").innerHTML = chains.map(c => `<div class="chain"><h3>${c.title}</h3>${c.body}</div>`).join("");
+  return `<div class="chains">${chains.map(c => `<div class="chain"><h3>${c.title}</h3>${c.body}</div>`).join("")}</div>`;
 }
 
 // ---- Buildings
-
-function renderTiles() {
-  el("tiles").innerHTML = BUILDINGS.map(b => {
-    const why = missing(b);
-    return `<button type="button" class="tile" data-id="${b.id}" id="b-${b.id}" aria-expanded="${b.id === state.open}">
-      <img class="thumb-tile" src="${ICONS["build:" + lookFor(b).icon] || ""}" alt="">
-      <span class="tile-text"><span class="name">${b.name}</span><span class="pitch">${why ? `From ${b.from}. ` : ""}${b.pitch}</span></span>
-      <span class="chev" aria-hidden="true">›</span></button>`;
-  }).join("");
-}
 
 function section(cls, title, items) {
   return `<section class="sec ${cls}"><h3>${title}</h3><ul>${items.map(val).filter(Boolean).map(i => `<li>${i}</li>`).join("")}</ul></section>`;
 }
 
-function renderDetail() {
+function buildingsHtml() {
+  const strip = `<div class="bstrip" role="group" aria-label="Buildings">${BUILDINGS.map(b =>
+    `<button type="button" class="bpick${missing(b) ? " off" : ""}" data-open="${b.id}" aria-pressed="${b.id === state.open}">${img("build:" + lookFor(b).icon)}${b.name}</button>`).join("")}</div>`;
   const b = building(state.open);
   const look = lookFor(b);
   const years = b.looks.length > 1
@@ -642,9 +599,10 @@ function renderDetail() {
     `Price ${money(b.cost)}${b.upkeep ? `, upkeep ${money(b.upkeep)} a year` : ""}`,
     b.from ? `Available from ${b.from}.` : "Available from the start.",
   ];
-  el("detail").innerHTML = `<div class="detail-head">
+  return `${strip}
+    <div class="detail-head">
       <img class="picture" src="${ICONS["build:" + look.icon] || ""}" alt="">
-      <div class="title"><h2>${b.name}</h2><p>${b.pitch}</p></div>
+      <div class="title"><h3 class="part-title">${b.name}</h3><p>${b.pitch}</p></div>
     </div>
     ${years}
     <div class="sections">
@@ -657,9 +615,9 @@ function renderDetail() {
 
 // ---- Towns
 
-function renderTowns() {
+function townsHtml() {
   const r = rules();
-  el("town-rules").innerHTML = [
+  const lines = [
     `From ${MOD.townRulesFrom}, a town of more than <strong>${fmt(r.minPop)}</strong> inhabitants needs waste bins.`,
     `What counts is the <strong>coverage</strong>${tip(TIP.coverage)}: how much of the town's waste your bins reach. A full bin still counts, but it stinks.`,
     `Too little coverage costs reputation, at most ${pct(r.maxLoss)}, and the town grows slower.`,
@@ -667,15 +625,16 @@ function renderTowns() {
     "Lost reputation comes back slowly, as after a failed subsidy.",
     "With Reputation switched off in the game settings, waste does not affect town growth.",
     'The town window has a "Waste" card: the coverage rating, the waste a year, the number of bins and how growth is affected.',
-  ].map(t => `<li>${t}</li>`).join("");
-  el("town-table").innerHTML = `<thead><tr><th>Town waste rules</th><th>Bins needed above</th><th>Max. reputation loss</th><th>Growth stops above</th><th>… below coverage</th><th>Recovers at</th></tr></thead><tbody>${
-    MOD.townRules.map((t, i) => `<tr${i === state.risk ? ' class="chosen"' : ""}><td>${MOD.presets[i].label}</td><td>${fmt(t.minPop)}</td><td>${pct(t.maxLoss)}</td><td>${fmt(t.stopPop)}</td><td>${pct(t.stopBelow)}</td><td>${pct(t.recoverAt)}</td></tr>`).join("")
-  }</tbody>`;
+  ];
+  return `<ul class="rules-list">${lines.map(t => `<li>${t}</li>`).join("")}</ul>
+    <div class="table-scroll"><table><thead><tr><th>Town waste rules</th><th>Bins needed above</th><th>Max. reputation loss</th><th>Growth stops above</th><th>… below coverage</th><th>Recovers at</th></tr></thead><tbody>${
+      MOD.townRules.map((t, i) => `<tr${i === state.risk ? ' class="chosen"' : ""}><td>${MOD.presets[i].label}</td><td>${fmt(t.minPop)}</td><td>${pct(t.maxLoss)}</td><td>${fmt(t.stopPop)}</td><td>${pct(t.stopBelow)}</td><td>${pct(t.recoverAt)}</td></tr>`).join("")
+    }</tbody></table></div>`;
 }
 
 // ---- Cargo
 
-function renderCargo() {
+function cargoHtml() {
   const cards = [
     ["waste", "Waste bins and stops; what a sorting plant leaves.", "Landfills, Waste Incinerator."],
     ["recyclables", "Recycling bins and stops.", "Sorting Plant."],
@@ -685,12 +644,37 @@ function renderCargo() {
     ["plastic", "Sorting Plant (the game's own plastic).", "Tool factory, machine factory."],
     ["waste_paper", "Sorting Plant, subarctic only.", "Paper mill, instead of sawdust."],
   ];
-  el("cargo-grid").innerHTML = cards.map(([id, from, to]) => {
+  return `<div class="cargo-grid">${cards.map(([id, from, to]) => {
     const why = missing(CARGO[id]);
-    return `<div class="cargo-card" id="c-${id}"><h3>${img("cargo:" + id)}${CARGO[id].name}</h3>
+    return `<div class="cargo-card"><h3>${img("cargo:" + id)}${CARGO[id].name}</h3>
       <div class="${why ? "off" : ""}"><p><span class="label">From</span> ${from}</p><p><span class="label">To</span> ${to}</p></div>
       ${why ? `<small>${why === "not in this climate" ? "Not in this climate." : `From ${CARGO[id].from}.`}</small>` : ""}</div>`;
-  }).join("");
+  }).join("")}</div>`;
+}
+
+// ---- Parts of the guide, shown as tiles on the left
+
+const PARTS = [
+  { id: "quickstart", name: "Quickstart", pitch: "Five steps to a working waste service.", icon: "build:waste_bin_new", html: quickstartHtml },
+  { id: "chains", name: "Chains", pitch: "Where each cargo comes from and goes.", icon: "cargo:waste", glyph: true, html: chainsHtml,
+    lead: "Faded: not built yet in the chosen year, or missing in the chosen climate." },
+  { id: "buildings", name: "Buildings", pitch: "Bins, landfills, the incinerator, the sorting plant.", icon: "build:incinerator", html: buildingsHtml,
+    lead: "All in the build menu under Road → Waste." },
+  { id: "towns", name: "Towns and waste", pitch: "What towns expect, and what happens if not.", icon: "build:waste_stop_new", html: townsHtml },
+  { id: "cargo", name: "Cargo", pitch: "Six new cargos and who takes them.", icon: "cargo:recyclables", glyph: true, html: cargoHtml,
+    lead: "Any bulk or universal truck, wagon or ship carries them." },
+];
+
+function renderTiles() {
+  el("tiles").innerHTML = PARTS.map(p => `<button type="button" class="tile" data-part="${p.id}" aria-expanded="${p.id === state.part}">
+      <span class="icon">${img(p.icon, p.glyph ? "glyph" : "")}</span>
+      <span class="tile-text"><span class="name">${p.name}</span><span class="pitch">${p.pitch}</span></span>
+      <span class="chev" aria-hidden="true">›</span></button>`).join("");
+}
+
+function renderDetail() {
+  const part = PARTS.find(p => p.id === state.part) || PARTS[0];
+  el("detail").innerHTML = `<div><h2 class="part-title">${part.name}</h2>${part.lead ? `<p class="lead">${part.lead}</p>` : ""}</div>${part.html()}`;
 }
 
 // ---- Settings
@@ -705,16 +689,16 @@ function renderSettings() {
 
 function render() {
   renderSettings();
-  renderSteps();
-  renderChains();
   renderTiles();
   renderDetail();
-  renderTowns();
-  renderCargo();
 }
 
-function openBuilding(id) {
-  state.open = id;
+// Shows a part (in Buildings also a building), keeps it in the address for links, and brings the details into view
+// when they are out of sight (stacked on narrow screens they start below the tiles).
+function show(part, buildingId) {
+  state.part = part;
+  if (buildingId) state.open = buildingId;
+  history.replaceState(null, "", "#" + (part === "buildings" ? "b-" + state.open : part));
   render();
   const detail = el("detail");
   const top = detail.getBoundingClientRect().top;
@@ -737,23 +721,28 @@ el("climate").addEventListener("click", e => {
 el("year").addEventListener("input", e => { state.year = Number(e.target.value); render(); });
 el("tiles").addEventListener("click", e => {
   const tile = e.target.closest(".tile");
-  if (tile) openBuilding(tile.dataset.id);
+  if (tile) show(tile.dataset.part);
 });
-el("chain-list").addEventListener("click", e => {
-  const node = e.target.closest("[data-open]");
-  if (!node) return;
+el("detail").addEventListener("click", e => {
+  const target = e.target.closest("[data-open], [data-part]");
+  if (!target) return;
   e.preventDefault();
-  openBuilding(node.dataset.open);
+  if (target.dataset.open) show("buildings", target.dataset.open);
+  else show(target.dataset.part);
 });
 
-// Height of the sticky settings bar, for the scroll offset of the sections.
+// Height of the sticky settings bar, for the scroll offset of the details.
 const bar = document.querySelector(".settings");
 new ResizeObserver(() => document.documentElement.style.setProperty("--bar-h", bar.offsetHeight + "px")).observe(bar);
 
-const fromHash = location.hash.slice(1).replace(/^b-/, "");
-if (BUILDINGS.some(b => b.id === fromHash)) state.open = fromHash;
+const fromHash = location.hash.slice(1);
+if (fromHash.startsWith("b-") && building(fromHash.slice(2))) {
+  state.part = "buildings";
+  state.open = fromHash.slice(2);
+} else if (PARTS.some(p => p.id === fromHash)) {
+  state.part = fromHash;
+}
 render();
-if (BUILDINGS.some(b => b.id === fromHash)) el("detail").scrollIntoView({ block: "start" });
 </script>
 
 </body>
