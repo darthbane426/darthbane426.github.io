@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>body { margin: 0; } [hidden] { display: none !important; }</style>
-<title>Subsidies+ Docs</title>
+<title>darthbane426 TF3 Mods</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%232f9a55'/%3E%3Ctext x='32' y='49' text-anchor='middle' font-family='Arial Narrow,Arial,sans-serif' font-weight='700' font-size='48' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231b1f26'/%3E%3Ctext x='32' y='49' text-anchor='middle' font-family='Arial Narrow,Arial,sans-serif' font-weight='700' font-size='44' fill='%23ffffff'%3ED%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: sticky settings bar; the subsidy tiles in a left column like the in-game list, the chosen one's
-   details on the right. On narrow screens the list comes first and the details below it. */
+/* Shared look of the darthbane426 TF3 mod pages: colours, type, settings bar, tiles with details, sections,
+   tips, tables, footer. build.py puts this file into every page template; each page adds its own rules after it. */
 :root {
   --paper: #eef0f3;
   --panel: #fbfbfd;
@@ -104,12 +104,12 @@ details.custom summary { cursor: pointer; color: var(--muted); font-size: 0.9rem
 .custom-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 0.75rem 1.5rem; padding-block: 0.75rem 0.25rem; }
 select { font: 400 0.95rem var(--body); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 0.3rem 0.4rem; }
 
-main { padding-block: 1.5rem 3rem; display: grid; grid-template-columns: minmax(17rem, 21rem) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.list-detail { padding-block: 1.5rem 3rem; display: grid; grid-template-columns: minmax(17rem, 21rem) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
 
 /* Tiles, as in the game's subsidy list */
 .tiles { display: flex; flex-direction: column; gap: 0.45rem; }
 @media (max-width: 52rem) {
-  main { grid-template-columns: minmax(0, 1fr); }
+  .list-detail { grid-template-columns: minmax(0, 1fr); }
   .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
 }
 .tile {
@@ -142,44 +142,17 @@ main { padding-block: 1.5rem 3rem; display: grid; grid-template-columns: minmax(
 .sec { min-width: 0; border-top: 3px solid var(--sec); padding-top: 0.6rem; display: grid; grid-template-columns: 11rem minmax(0, 1fr); column-gap: 1.5rem; align-items: start; }
 .sec > ul, .sec > .note { grid-column: 2; }
 @media (max-width: 40rem) { .sec { grid-template-columns: minmax(0, 1fr); } .sec > ul, .sec > .note { grid-column: 1; } .sec h3 { grid-row: auto; } }
-.sec.offer { --sec: var(--muted); }
-.sec.accept { --sec: var(--upfront); }
-.sec.task { --sec: var(--task); }
-.sec.complete { --sec: var(--good); }
-.sec.failure { --sec: var(--bad); }
 .sec h3 { font-family: var(--display); font-weight: 700; font-size: 1.25rem; line-height: 1.25; margin: 0 0 0.5rem; grid-row: 1 / span 3; }
-/* The contract time: a blue box in the right corner of the details. */
-.time-limit {
-  margin-left: auto; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0.15rem 0.5rem;
-  background: #2f6fbf; color: #ffffff; border-radius: 8px; padding: 0.6rem 0.9rem; max-width: 15rem;
-}
-.time-limit svg { width: 1.1rem; height: 1.1rem; }
-.time-limit .label { color: rgba(255, 255, 255, 0.85); }
-.time-limit .time { grid-column: 1 / -1; font-family: var(--display); font-weight: 700; font-size: 1.6rem; line-height: 1.1; }
-.time-limit small { grid-column: 1 / -1; font-size: 0.82rem; line-height: 1.3; opacity: 0.9; }
 .sec ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
 .sec li { padding-left: 1.3rem; position: relative; }
 .sec li::before { position: absolute; left: 0; font-weight: 600; }
-.sec.offer li::before { content: "•"; color: var(--muted); }
-.sec.accept li::before { content: "+"; color: var(--upfront); }
-.sec.task li::before { content: "→"; color: var(--task); }
-.sec.complete li::before { content: "✓"; color: var(--good); }
-.sec.failure li::before { content: "✕"; color: var(--bad); }
 .sec .or { font-family: var(--display); font-weight: 600; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-left: 0; }
-/* One card per reward of a choice, stacked, "or" between them. */
-.sec li.options { padding-left: 0; display: flex; flex-direction: column; align-items: stretch; gap: 0.35rem; }
-.sec li.options::before { content: none; }
-.option { min-width: 0; border: 1px solid var(--rule); border-radius: 6px; padding: 0.55rem 0.75rem; background: var(--paper); }
-.option ul { gap: 0.3rem; }
-.sec li.options > .or { padding-left: 0.75rem; }
-.sec .or::before { content: none; }
 /* (i) buttons with their explanation, shown on hover, focus or tap. */
 .tip { position: relative; display: inline-block; margin-left: 0.3em; vertical-align: 0.12em; text-transform: none; letter-spacing: 0; }
 .tip-btn {
   width: 1.05rem; height: 1.05rem; padding: 0; border-radius: 50%; border: 1px solid currentColor; background: transparent;
   color: var(--muted); font: 600 0.68rem/1 var(--body); cursor: help; display: grid; place-items: center;
 }
-.time-limit .tip-btn { color: inherit; }
 .tip-text {
   display: none; position: absolute; z-index: 20; left: -0.5rem; top: calc(100% + 6px); width: max-content; max-width: min(20rem, 80vw);
   background: var(--ink); color: var(--panel); padding: 0.5rem 0.7rem; border-radius: 6px;
@@ -204,821 +177,59 @@ th:first-child, td:first-child { text-align: left; }
 thead th { font-family: var(--display); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.82rem; color: var(--muted); }
 tbody tr:last-child td { border-bottom: 0; }
 td .sub { display: block; color: var(--muted); font-size: 0.8rem; }
-.lanes-sign { display: inline-flex; gap: 3px; vertical-align: -0.1em; margin-right: 0.35rem; }
-.lanes-sign span { width: 4px; height: 0.95rem; background: var(--task); border-radius: 1px; }
 
 footer { border-top: 1px solid var(--rule); padding-block: 1.25rem 2.5rem; color: var(--muted); font-size: 0.88rem; }
 footer p { margin: 0 0 0.4rem; max-width: 48rem; }
 
 @media (prefers-reduced-motion: reduce) { .tile .chev { transition: none; } }
+
+/* Site navigation between the mod pages */
+.site-nav { background: var(--ink); color: var(--panel); font-size: 0.92rem; }
+.site-nav .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1.25rem; padding-block: 0.45rem; }
+.site-nav a { color: inherit; text-decoration: none; opacity: 0.75; }
+.site-nav a:hover, .site-nav a:focus-visible { opacity: 1; text-decoration: underline; }
+.site-nav a[aria-current="page"] { opacity: 1; font-weight: 600; }
+.site-nav .home { font-family: var(--display); font-weight: 700; letter-spacing: 0.04em; opacity: 1; margin-right: auto; }
+/* Overview: one card per mod with a link to its guide. */
+.mods { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 1rem; padding-block: 1.5rem 3rem; }
+.mod-card {
+  display: flex; flex-direction: column; gap: 0.5rem; color: var(--ink); text-decoration: none;
+  background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 1.1rem 1.25rem 1.25rem;
+}
+.mod-card:hover, .mod-card:focus-visible { border-color: var(--tile); }
+.mod-card h2 { font-family: var(--display); font-weight: 700; font-size: 1.7rem; line-height: 1.1; margin: 0; }
+.mod-card p { margin: 0; color: var(--muted); }
+.mod-card .go { margin-top: auto; padding-top: 0.5rem; color: var(--tile); font-weight: 600; }
 </style>
 </head>
 <body>
 
 
+<nav class="site-nav" aria-label="Mods"><div class="wrap"><a class="home" href="./" aria-current="page">darthbane426 · TF3 mods</a><a href="./subsidies-plus/">Subsidies+</a></div></nav>
+
 <header class="top wrap">
   <div class="brand">
-    <h1 aria-label="Subsidies+ Docs"><span class="logo" aria-hidden="true">S</span><span aria-hidden="true">ubsidies<span class="plus">+</span><span class="docs">Docs</span></span></h1>
-    <p class="tagline">Transport Fever 3 mod that adds 15 new subsidies to the game.</p>
+    <h1>TF3 Mods</h1>
+    <p class="tagline">Guides for the Transport Fever 3 mods by darthbane426.</p>
   </div>
-  <p class="intro">Open a subsidy to see when it is offered, what you have to do, and what you get or lose. Set your difficulty and game year above the list; the amounts follow the mod's own formulas.</p>
 </header>
 
-<div class="settings" role="region" aria-label="Game settings">
-  <div class="wrap">
-    <div class="field">
-      <span class="label" id="difficulty-label">Difficulty</span>
-      <div class="segmented" role="group" aria-labelledby="difficulty-label" id="difficulty"></div>
-    </div>
-    <div class="field">
-      <label class="label" for="year">Game year</label>
-      <div class="year">
-        <input type="range" id="year" min="1900" max="2030" step="1" value="1920">
-        <output id="year-out" for="year">1920</output>
-        <span class="inflation"><span id="inflation"></span><span id="inflation-tip"></span></span>
-      </div>
-    </div>
-    <details class="custom" id="custom">
-      <summary>Custom settings</summary>
-      <div class="custom-grid">
-        <div class="field"><span class="label">Subsidy risk<span id="risk-tip"></span></span><select id="risk" aria-label="Subsidy risk"></select></div>
-        <label class="field"><span class="label">Infrastructure cost</span><select id="infraCost"></select></label>
-        <label class="field"><span class="label">Infrastructure upkeep</span><select id="infraMaint"></select></label>
-        <label class="field"><span class="label">Industry productivity</span><select id="productivity"></select></label>
-      </div>
-    </details>
-  </div>
-</div>
-
-<main class="wrap">
-  <div class="tiles" id="tiles"></div>
-  <article class="detail" id="detail" aria-live="polite"></article>
+<main class="wrap mods">
+  <a class="mod-card" href="./subsidies-plus/">
+    <h2>Subsidies+</h2>
+    <p>Fifteen new subsidy types: factories, networks, trains, trams, settlements, highways and more. When each is offered, what it asks for and what you get.</p>
+    <span class="go">Open the guide →</span>
+  </a>
+  <a class="mod-card" href="./waste-industry/">
+    <h2>Waste Industry</h2>
+    <p>Street waste bins, landfills, an incinerator and recycling. How to start, the cargo chains and what towns expect.</p>
+    <span class="go">Open the guide →</span>
+  </a>
 </main>
 
 <footer class="wrap">
-  <p>Subsidies+ is in beta and the numbers are still being tuned.</p>
+  <p>The mods are on mod.io; these pages explain how they work.</p>
 </footer>
-
-<script>
-const ICONS = {
-"eco_contract": "data:image/png;base64,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",
-"highway_concession": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAFbUlEQVR42u2bz4sdRRDHP137FiE/NGpcfx103QgJuxFCVBT0LxAPAS9ePGj24EHwIvhP+BeIF9H/IOeAB5GEsJIImk3WENiAF3fXbEIS896b9rDVUDbz6810v7DZbRhmpqerurum6ttVNT3Oe89eLsIeL/sC2OsCGEyxL1dS52ue+8dJAK7FhPzjrAEeeBKY0WsH3AcemHEcNkJwwNbjgAGB/wlgFVgDrgF/Al+adu9q3RpwXa8/0Wczu1kDBCiAs8AL0bMD5noWeDp6/gXwQ27TkMx2PwYOAR/rRMbA0FyHUpi6cD4FvKn3M7tRAMHePwRe1EnOqGBcpH223plJn93NGlDoebliOVwxddeAO9HkPXAGOKq83G4SQLD9ReD9SI3DRDZM+9tqGs60KXTyZ3KagWTWrE9V1ccNADyocZSWjUB3hQBi8KtaynyDExTM4HROMJQpgN+4h/0WOsZsYChTBL8+wswGhjJF8Gvy/X2FOWUFQ3kE4FcGgq7BK80GhvIIwM8BI136wv3Q3PtpgqFMGfxCJLitzk+gu2Pu/TTBUDKDnzdHrAXSMBZLmw0MJTP4Wf++i0nZIwsYSkbw85rU2AL+mVB1vdIEekubFAwlU9g7AM4BC3q8rXbvWo5pW2kC/Tl946PUYCgZwO9frb9k3uARTYmNWvAba9sjhv6SPhulBkPJAH6B5x/GfpeixKiryRoXEY1TXlk8Q0kMfoWq/0PgikHx4xHdqOQNDqNl8Lihv6I8A74kA0NJDH5BRf8C1s3zk9HkflfHx/Z/MeJ90vSxrjxdas9QEnt+gd8N4J7ezwJzkZrXaUBoM6e0orxuRN8YkoChJPb8QlnV54UKaCGaXB0GhPOC0oZc4qp5+8k8Q0ns+YXBn1eBFMDLwMEJACs4PQeVtlBe583zZGA4yBT2fgV8rtfPqir7Cd6WU5ofTe7wUBRgWTD81mDQVAVgwc/yeot2H0ebPqS+0cJjXAa+6wqGkinsDWo7rhiYb1lXxydJmCyZwl7RdjMVfQxa1jXx6Q2GMuWcXxjkryWfzVc6mEpvMJSMOb+6slEy2Y2OWNErTJYMOT/fAvHbmkBbnp09Q8mU82tKgrQFwTY8e4GhZPjgsW3C2GGCaHNo+G2n/oAiicAvdLqu+LAAHDNx/LjDxMcmr3BMeS5qH7HGdAZDSQR+QTjXgVv6tu6bGEA6mICYmOCe8rylfRDZemcwlETgFwZ/1djqHDvbYHxHEAxL5FPAvOF7tUGIE4GhJAK/oG4XDFrPK40vifQ2SoR3W11qFz17QnkFvhcqlstOYCiJwC+o4Jqpe6bGx1+JljfY+TCyHTlH4S0uGR5rNTY+MRhKAs/PK5+7kQCWSmy1ye2tAq7FSAB3tb3v6xlKAs/Pm4FtmsnNt9wi2yYqfMUIbtMI2vf1DCWR5wdw0+QErQBIsL/4VQXUQvu42SDI1mAoCbe62Nz94QYNmHSP8XN6FFFfvbfWSALPL/D4zVzP6vKVSgAHgNeUv2hfdeNvDYbSM+y1G58vK00BvGRU1k2QHXI14zhh+F/WPl2DFjSC4aBn2OtMh9+bwdg8YJnQRhPUh36/Bj6KEqOuwXybc4be+7JjoOdv/E4Z+v6l0POW9/6o8nd6Fr3+SduMEvQ30j4vKn8pm6tM+MGjKXipywN21YCy/OB4AgfutB6lWiw1hB8Az5uQtmg44pi9qW2VcKpoKNkw0XQEgX5WBYau5L/BkIj8uSK93bc81FVl04BYwJxfgHcy9PkAeF2jyf8Bp6v4cXIWeI88ZaQTHZUsd6fY2RdA4n+VRFeOv9sKgP3f5vL+qzOuWX4d+f5f8G0wgP0/R/cFsC+APVP+A1O//UgioJc0AAAAAElFTkSuQmCC",
-"industry_expansion": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAFjklEQVR42u2bSYgdRRjHf9XLe7O8GZe44hZlFKIXJUZwObgFETyIBw9RD6JJQImoAUHEi7kIHoyCKFH0ojdPiggiioq4gRojiFsCOhjFKDIZksnMe10e+mss2n7d1f2qe3omU1D0e91dy/evb69qpbXmeC7eKqGhMh3BKiA+kt9Krvp44YBAiH8QeEUIVwYQjXKAl7ECyug/ApYcE98HtgJPy71FYDvgy3i6KQA84FJgC3ChMbgnk/kbeB74tAbi9wADqdsE9G2lQNBaj1oDrfUWrfXP+r8SGb/ntdZ3ORgnGQut9Vbpu2+MtSjXPfKOr7VWRX260gFaVoGUQko4ZFDTypuiFxY8r00JKmCsQJz8mokv+55zKzAGdHIA6jRAvPn+ku37rgDoFhAZjqBg+8A9QsySha2PpN0xAeEFAUFngeBSBFwDkMztIeAlox+/YN6J9enK/+3Aa8BElp8QOOSArmMRiISQfcD1hmnVwBTwqlyTlU2uO4GvpO1A+ukZjpNzAFSBCCTP/QrWYAC8myPnaUukgI+BzwoslnMO6BSwZQLQ0Qp9+ykwNXBijhLsSZs04JmOkSsO6FhYiW5FAAYZAAwKRGeQ0bZWMxiOICKrIh9QBMDJbQ29XSrBIhEYdzz3yJBrZeQF9HKEw0UcMCkguCpKTKCXwc1B0wD4Fo5OxxEHJKs7B9w4ZP5fGxzSCACTBQpOOQQgKX3gI0uwGgHgBAsO6DrWAX6ObtBNikDPgrhODUpw0BYzOCW1SEm65oDW+AETBQmPqjogieoULfcDpiwyPmUA8IEZ4CKR5Z+A78va9yYBmLBYpdAyJzAOXAHcB1wn2v4T4FmJ8BbaCEDPwmkZl6pyVnISuBnYAWw0gL0FOJs4tf46MN9GEQgt5FnnADAN3EucwppJzasDXA48DpwBvAz86UokAgcu6VkysTxz9SHwxRDvbB3wKHAncNoQcfKA84FHgNOB54D9tt5enQCEwEFgL3CKkYublN8HgbeJE5rfZrS/AHgGuMmCixRwEnA/cCrwFHG6bCQQlKPzAekt6iR/FxJnZ9NJjQC4GHgR2FRxzH3AE8CbMsayABBSbtPTFza/EtgFbBjRzs8SZ3x3A78vJwfYitsMcBtxqvpcR/3+A7whIvFdWRe5KQC6wGXAHcDtwgUuyxFRtE8Cn1Mi91gFAM+w7V6BH7AkbL8RuBu4VrR+HWWBeAt+N/COLQhByf2/TcCtor27ouzygpxFAescYL1Yh7rKGHC1WIUDwDeuAVhPvOuy2cKryzJhTZRQFuk8sRLaFQCK+PTHZnFRmyasrL7x6giHOyniafHhKb8OT1A7SGMvDYnzdcGCRBncpjPiDCRYWqgLgGiEJMpvwHsCQk84ShuT3yDVLIeBL4E/UqAl22NnAtdI2BwaCdOobQcltSilncChjCN1PeAB8Q5NgH8R83kg4zCkAq4CPkjFEQtlvNMmD0rOC/EYK29OejZDzPoG8el2Gvhx1GCoSQDyzvUkLK1KtEkcLbWSAMh7NjbE/KoR03GtAUAXWBKdswFatc/WAZAXJk9UML3TbcgJ2hKf7OgeNRImGFmkIIPgDvHZgsMpu6+M59FKACCx8ztE2w9E5rWsfCBudlqeZ4DHiFNuCYihQfglo3Jx0wDsGnJgMbnnZQQ3D4s59IaIh5/Rxm/rFyNeAwvVLfP+avhmKCsvENYBgLdCABuUMY1eCRn2XGxENFAWy+QqvBJmbA74q65dWofmdrbMPIMSHe8H3iLexVln2G3Pki3TXl0S3voVQnLzGwDfuHeI+Gzxr7YAlMkKd8SU3SDXaRnY5uTHnAQuR/j/md7pkuy9IP10jfbH5N5e4H3gB9vdoippcWXUtoiDMr5Nitq6M8Tat8NrAKwB0LryLzdwGTQ5s7wnAAAAAElFTkSuQmCC",
-"industry_partnership": "data:image/png;base64,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",
-"intercity_express": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAFG0lEQVR42u2bz4vdVBTHPzfJdAQdp29AxP9BhCIu6kKktioIbiqCS7Va3RWKILgX3BUXpVYRUTf6H6goghRrUWstiDItWqhV0JnXjjrQzktOFz1Xjrd5yU2a95zXyYXDTfKSk3u/OT++9yTPiQhbuSVs8dYD0APQA9AD0APQA9AD0APQA9AD0APQA7AlW9aBDtfRWGRWAehq4A5IgXyaYLiagoirmawDbldXkpbW4K8bmmMpUEwDiKwmPhQlExbTLwIntb9RC/oGeA/4ELhsgECt4n+xgMXg6Q4DIAbAOWChwzH9CHwAvAWcDyyxe4sQkVASEXEisk9E/hCRP1VWReSwiMyLSKrnDkRkRUQKEcm1bysjFd/WRORtEbk/GBtdSnjAmYmNa7vM+QMFRnQSYrabiG15AISIyBERyfSeaZcAJCX+mAB/A0dKDOY4cDqCP7iGIsbPE/V9fywH9gOfq8vlJjZMJAY442sPmME44GvgLxMgB8BZ7W1wXNPfXY3f2liCifzhBEcasE8Cz2qf6fGJBsGq1CgBAIUCcxHYAVxqoOte4CVgTwUQHoQh8ChwApgDNroOglbSQFxJrFg1viu6v9DSJ/eIyMdBPLAxYmQC5DNmjK6rIBgrdQAs6Tk+o9RJGkT4MiDKtg8YEJKuAKgaaCwAg+C8WAknsl9ENoKnLyZtiogcvZE0mZSwP6kQN2Fmmqv/pypvAA+q36cmU/h1wwh4TonTwFzbejlcKPsbANu1t9vSQG+iQSszE0pM6qsDItdrjwGPAMtm0pbKj4AngY+Au8x1jYJgGftbNVLFBEMXWBGRbRHml6ieTCU1LmBdxxOgJRE5offYCIiS378gIvcF11WKExGbi1cjMHsI+Ey3y3jACPhS+1OaDk9pevxd5TKw3oBMzQFXgCUlaHtLCJHfHwJPqUXUcgXPAzz7eh14oeL848DjwEoFEaoz7TVlmmcUlO91kF9pf0Z/H1boOQy8WHK8MG79PPDmmFXtdQCUsb+yNXsME7TLVwmeZkwJbl0tZBn4R1eb5xSs03rsB+AA8DIwH+gtTBw6BBzUe+eTZoIxFiCml+BY0qBOeVHd9U7g1jH38cHwFeDVIItUAlCVRoqA8zcFoEmBpCipAcRmEX99oRa1A/hZryvqqsJ5hUyjVudMnk9NKs0MABIxlsSU7F4b94CaLms3S4sdjzf7J4DdZUvppAbBaTPBSYFVaPpcNMv02qJoUVETnMUXQFnZfJMK39mnOXlZ+7Oaf+dn6I2SmNS6V/nLf4o0YRaIYYV1THAzTd6nwqeBd8pSYRc1wWKMxKapJtJEp68gHdLJz8XygCY1wSXgN2DbJnWBT4CHFYjSNN6WCYoJojtNcPG/LQDvax+6ht8/qMXNtObNTxud/gF9q4uxscXZLCKPljFBW6j8YozejZp3gcd0AdTkNV5bndL27XAeSTbCp7U9IiDeZthejAW00Vn7gjXrqIwVDjY3wSg01yKg3EQC0KXOTgEYN+iFCp7R5t6T0NkqCMYCu7NmQN8ps3SRi6xJ6GwEgJvAVyPT1iltXcBNaCk8bZ3XzSNroHQwoytCP+ZLZWwyi6zvv8u1F5LFDH5a5wH4BXiMa1Xpfy2lKgbYhdEF4BZmv+0GPrXcI4v0/ysTTJnTKIjkul5xTVzAm866ms89M/zkU53H+TBQxnwnKMAdwN0zOnm/xP8V+KmuIHKzt9Zp0N0EH1ZLWRp0/X+H6f8v0AOwldtVdvuc+SZj3igAAAAASUVORK5CYII=",
-"investment_contract": "data:image/png;base64,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",
-"new_market": "data:image/png;base64,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",
-"prospecting_contract": "data:image/png;base64,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",
-"rail_connection": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAFeElEQVR42u2bS4gcVRSGv3pMTEyiSUiUgAuZIGqMBAkqCoohIGQlLqIbH0QjRgdcCeJCRVFcuI4SXWgQVNy4FCU+dpKIiBtRGREiEoNj1NE4SWaqfhd9Lh6L7kl336qaHtMFh75dfZ/nnvc5nUjifH5SzvPnvEdA3vD8SY1zabkgIDUoat50Zp/FKCMgsw2W9n1dJCUEBP7pDp7ae40SAhKDAtgG3A/cClxR0/zHgSPAO8CHDhFlPGNJsZAYIOkZSWfU7PO2pA22Xhq7/6QGOyCzmzgIPGSkWdgNJTUKwNLmy4DPgd3AyVgBmdbE80/b4c861koda8RCanNmtsb1xg5JLJJjKCDw4NXAV076JwPcSjKAmvN954EJYC/whruIVikgjN1nm5HbZNnnzXYTpL2gqKwtYMq1W9cChY2/zTaQupsM1PGHbV6VgwpYBay0dwum6nr1XWn95VgCo77LgGPDaoU8Qu0JuAiYrNx8akLqQeCnLuQdyPUJA4DPgDu6ICDc9oXAs0bypTvsalO1x4aVBXkN0lmunQCngXuA784x9u8KT/+2SN9fDaE3AVdVbrocJWcosYP9XBGKHiacOqvyf9aD/3ND8I91+wV5Qw5Q7gShelBNv++9UJ1YLu6wGppT43jAGAFjBIwRMEbAGAGjj4BkucybNqivkwb2WjDiUWGZtRZc1LyLrZ52iRYl7n0vx6s052tkKSBsdC3wErDC3NyyAmft84wbG/p16x+izI8AO6ydjSoFhJvfC9xs7nDaw8e/3L3bAXy8yLxr6ITBWA6JkcRu6UqDfp71wM4+2CtZLqmxELDQORCVVqK+9JEZWja5wXRAqsng/2cIxbqwjbjAbSGgqER01fL4JUdARic89rsLdbU5fkktwRJ43rTAFjoBzZk+STp2fCvJ0ZAMXS/ppCUtS0kL1n6hy5jbJRUGvZ5BxofPnfZ7NsxZ6kRA2NCspEttQ5n1nbD+RyoH9U854PhaEJA2EABdAOb4N5rryfavPuYbdLyWUgYkzpYI0nodcKe1M3OOFuhkcG6spNGqcw0zPl8qGZBIWiXpW8cCpcGMpN2u/zZJRyusoh5s0O/40ooxtsYUS8Skx0OO7xBwr0uW+ucocAq4xWV3BlFnvcaHRMk0cI1RiJbKFD4E3NeDL2/gv9mddEC50mt8YazxFp28Ym5IaLVAwlPBu8Aex7dUStqGLZfpNj4g4gfgOjpp9aHtg1ghGDazn05KPKt4dVmkFVcdL1c1djed+oMoTVBHkVRwfTcAXwOXNJQfTB2FPQC8HkP6dZrC4Xb2ABvdwdOawa/1OHCxE4YsFQWEcNcknUKp1XYjOfAp8FxMAZOjri3Aa84wyoCX6dQIxVFBZKFhMD8Pm26eNz09K2myhiJMDwfcGsGU3hVjBsf4An7RKbexeWtP2W8rnE0/LOQGayVNmwE0b5/T9j51/kkrCAgLbrHbLtzhP7GN13H4zM2VmEeoynoHbE95mwjoRvqlpOOSNtVM+lV40XmE0ayQRxg/U8AuE0AhdPU+nSqu7Q2ksVJXUjdjajcYQAfNKDrVoy6pNi3gpf6XJvUTt6hayjgvON+gjNEK6ZDpr4OWApPbUNJiuj0HvnFrFsCjjiKzJiggkP5+4BV36Ax4ErgW2NxUBqdLhugp4FVgq6OIaWO/ub6t0QGkPpK2O6F31tqHGxZ6i8EuJxBPW/tN0xhZnSGxgPU54APD9gQwCzzsIkNpi5ADHxnvZ8AFwAngC/uuJi3BuySdkPRYrCUW+VedVNIaSd9Lek/S5qYjQomLyGy0pEXRdPqqD6G8CfilIqsadYayJspVIpGQDOOGx3iDSZP/6BwSCa3GBEfpb+ca1wkO+fwD7ZRijuHk2qEAAAAASUVORK5CYII=",
-"regional_network": "data:image/png;base64,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",
-"traffic_relief": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAE+klEQVR42u2ay4scRRzHP90zu6tuNtmNGzbswYOCJ0F0Iz4C64OgePNi/gG9BBNRvMWDJoIecxCiEFGIhwh6UBAiJAgGYhL1YhQkgop6EJKYhw/czU7P14O/gqKo6cd077hhu6Domemqb//q+/tV/R49iSTWc0tZ560loCWgJaAloCWgJaAloCWgJaAloCWgJaAlYD227v/47KTGXF3vBCRNLuJ6I8AtfpNtQVWwBkfalaZIHDUBHSADdgBHbBFVzqHMZD4A7LfPvVraGGFN0C02Bb4Fbq+J9yhwzCN1zXuB1AR90RbfMxPul5zft/GZXd8Fttjv6WpbQFLzFE5N0LuB054lONyrdj+2r92Yae+8yEzzHwBP1toKkop6GvktKTHP7x27ntB/rWddkj6TNCvpZkkzkT4raVrSfhu/ElyfM+xuRZmQRNmBm0yYabsOs/hnvMX7JCxWwDruze17GHcFz2qEgNQ0/bSkC5IuWr8k6aCkiQHWEcO4VdIfkjJPcEk67Gkvyekdu94m6XePgMxwvpY06Y2rTYADmdHg9kgJ1t299wPNZZKu2IKSEkT6WDuDLeDIfHuYrVCkvTFJb0QWf0rSFk/DMQK7gcC9QPB9dn+sQPt+H7M57wzA3BlYVCEBeV7AP5EX7dR1p/BXwJ+RUzvx3J07uc+Zu5LnEc4BC8DfQ3qvCeCsuVPnPfrmTe4BfgzcfH81AqHY4t33DeaaXgV2eW7LXfcAh4Fxc19VQuGOzbkf+BAY89xsCpwBngCWgctFuUdZAjoDgpJw8fPAPovSNgCbB8T6l4PfVJH0BLgGzAZBkLt31e6fMiWc8UgqTUBSMh1147ZakHNLRKBRtjAy7AGPA8djYXOaE7kppyeRsa/Y4pcHjAsJbKIXyX7NtuLrtt0qWUAsXXWfw701BXwPzDVQ7FgNi0iA+4AvQivoDmDvKeC1SLrqzOs94Hkzr8wOohvWUqEjsp2niuoBzpXMAIcKAHdZIvKpZxl91nbLitJh2fe/gDcLwE4D3wTzkxIuTKtgIWVxkzIVIQErpuEjEfcXBkJpCeGc708CbSQ18vjGcLs57u1EzcKmE7Ab+P4pj9gsQnIZU24Mt1sh+IkFQknO/Q5wHjgIHAV+sHtzwHbgWeCOirFC87gls6YwKYlljZeCBOUTSfM5mOOSDgTpcV7LhsR12A/Hste6FaEYAZJ0LDJnUtLmSHr7ckBcrPVq4C7npe91K0KOgGkrlvSteDLnETcv6ZCkX2zMR5Lu9bSVWFlsEAl96xeHxHXzH6xKQNmKkKvCfGwC7/Xmb5X0c2RRK5J2eM96yEw8GzBWkl4aAnfRfj9vSgy3cCMVIVekWDABFrz5b9nYJU8TziS/M00h6UZJPxkBKx4ZPfu+JOnOIXDHJf0j6YVB1aumKkJOsAckbbTPU5J+8wQMD7S+Z7JIOplD9pK3zzdWwB2TtD2vQtQtCDbCoCivIpQAnwcudqLACd3kRaS7rYIUaz2LUJ17LovbB0424QYp+W6gE1RxjwYnsV8OvzBoXxYURqvi5laKq9T2/Z6UdJ3bvIMtPOR2B/syjTzH78PiNvJipI6FPCbprCfgr5L25MQYI8Vd7bfDfrFyGzAJfGn7uU7toDHcUbwej72+rvVKu0ncUf0/IAlq9ForuKP8gwTt3+RaAloCWgJaAloCWgJaAloCWgLWTvsX3qmA6vowMDEAAAAASUVORK5CYII=",
-"tram_network": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAFVUlEQVR42u2bTYgcVRDHf90zuxs3blYj8Vvwi+DBixoWRA8JBhZPgh9EPHiRBQUVREGRgB/gOR4U1Bwk4EFQj0okiogeJBtURJAEcjIGDMkGk5jNfkz/PUw9KHt7Zrtnu3t2svOg6Z7u6n6v6r2qf1W9mkgSG7k1K/puo6LvJkCpMxYNV0A137y/om//CpwForJWQpkrIAxqK3ACuKICAewGvjUVaw2yDUjsLCc8gDiHkNe9CiwBB4GJFIMN4B/gNuBue6YU8yeBI8AWJ6jIzjFwOiW4tTdJdR4PSjomaVlSS/9vS5LmJM3UOaaqPhzbMeruva2V7TVJTxjjkpTY+TNJ2+y9UUkN+140KALADfZGSQeNsQU7n5Q07Wi3S/oxRXNM0gODugIim7VHjVnZspcJ4waja9qBpBFJ+zLU4lVJE4O2Ahp2PmCMXJJ0QdJbGTRBZcL1k5JOSFq0d49KGjfmSxdAXAEKeH9gM7AMjAEHgDeAEbPorQxYHAM+BV627ywBF4E7qoLBmOragkFh066fAfYYU3EH32EBuBN415gdAa4DLpQOfxXDYFiqk5IOOxswJ2mqgwrEkq6RNOv0/7Sk+zLUZCBQIAz4WkmnnGE7Zfdwhi3QHkohwW5nLBk0AfhZnrLZD4btsKQtKZoP7dm8nWeqZr4OAXgGHjfGLtr5a0mb7dmbdu9fO++rg/leUCDq4WgBo8DnwHMuSpy369ieA4wbWrxk95Ie+yw9HG6YBU5KsLvvW1D0eur+HuAp4DGDzrVCcZwnZM4jgNgxPukkXETScrMzb1A44Z41gHMGmaPWp3rA/fDO2ZRP0nM4HJh/CHhxDZmeKCWEyOX3fDisVJjcC+4LOArsBz5231fRFRCYnwE+GtCU337gWWeLcgsgpJx2At/ZtVymRwWzNnXTyxnfvcA7ndJo3QSQAF8B0/ZiM6Vnq+khfaSXE8oZYLsZ3hXCyhJA0L2rgOMW1KQ7SWdmw/VkBz+/TnpPE1JpO4Hvs1ZBMwfm+4gtAZ62nJ9Hh9D5rcCXwPXOyNVFH5hL08Rdk7RdApmrXaoq5O/OSBpbxbs65Pz+ftEHmuB678oIwHr2BK90joaHtYbda/aRPoum9LS4359TyvBk7d3VSV94/7DKhMhAtKEAhgLoza/PC5110Ne6Nyhg0VlopbzHJTvqoq9tBYTBjAO3m6VtOecosYGNA7c4a1wVvfq1AjYB3wC/ZwgoAW42vzu4zlXRJ2WpQrMH3d8G7CoQrFRNX3t9QLfUWJShVlXQq58CiApWgVVNv+H9gGgtUDnoAvCwGbvs9VJZAtA6nvUsWE5Da7QaH831oos9Ng+bWdAar1a11iknGJbUT8A9qYTooKhGcK4uAXfRrl1ckWqPu8z+MvCe22FJ1jGzLXeEcS7apH1hzDeyVGG1fQGAD2jvDZASQpyzGLIuxMoa2yzwMO2kqYoKwBuQvbQ3GG4aEBU4ZzP/CjDXbZcpz95geHkCuNekOwF84qpB09njmHadzy9rrOv1fRfp7w/grzz7g0V2h1up33/T3jOgw4CmbAlSUu1x0f4aefKDeR2hloPFUbs+4iq5PJ1o1/QeN5ht2nu9Hr30F7tnpRdJhXqeHW6/oJWq/X2+Ux5+vfW31iqwaUm/uYH8KemFCqq6KusvDwp0U5+WLdMdtIsiZ4HzZYesJfWn4X+GCsQCEe0/LeQtVYm7FSFUFMbn7S+M/3xW7VGzA+5OAj/T3iIXFdTo1uwqR8AjwA9pSO+2AraaIC7r1d4tGNp0mal7o4gRrPK/f/1qmf85HKJAH/7/26+WFA2HGe4Ob4D2H9WP/NN+4gqxAAAAAElFTkSuQmCC",
-"transfer_hub": "data:image/png;base64,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",
-"workers_settlement": "data:image/png;base64,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",
-"world_exposition": "data:image/png;base64,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"
-};
-
-// Constants of the mod and the game; a generator can later fill this object from the scripts.
-const MOD = {
-  moneyStep: 75000, // 0.75 x 100 000, the step of the base subsidies (subsidies_plus_util scaleMoney)
-  inflation: { fromYear: 1900, toYear: 2000, from: 1, to: 4 }, // finances_util.scaleWithInflation
-  costYearCurve: [[1900, 1], [1920, 1.5], [1940, 2.2], [1960, 3.2], [1980, 4], [2000, 5], [2020, 6]], // treeCostYearMultipliers
-  presets: [
-    { id: "easy", label: "Easy", risk: 0, infraCost: 0.5, infraMaint: 0.5, productivity: 1.5 },
-    { id: "normal", label: "Normal", risk: 1, infraCost: 1, infraMaint: 1, productivity: 1 },
-    { id: "hard", label: "Hard", risk: 2, infraCost: 1.25, infraMaint: 1.25, productivity: 0.75 },
-    { id: "veryhard", label: "Very Hard", risk: 3, infraCost: 1.5, infraMaint: 1.5, productivity: 0.5 },
-  ],
-  scales: [0.5, 0.75, 1, 1.25, 1.5],
-  productivities: [0.5, 0.75, 1, 1.5, 2],
-  townDeliveryShare: [0.25, 0.4, 0.5, 0.6], // of what the town takes in during the contract, +-20 %
-  minDelivery: 10,
-  minRewardShare: 0.25,
-  investment: {
-    workMonths: [24, 36],
-    travelMonthsMax: 24,
-    referenceUnits: [90, 300, 370, 450],
-    // A new factory's yearly output at industry productivity 1 (measured 48 to 225 at 0.75).
-    factoryOutput: [64, 300],
-    rewards: [
-      { money: [85, 115], townExperience: [20, 100] },
-      { incomeBoostMonths: 60, townExperience: [20, 100] },
-      { money: [40, 55], incomeBoostMonths: 24 },
-    ],
-    fine: [40, 80],
-    factoryCostByTier: [500000, 1500000, 4000000],
-    factoryCostFactor: 2,
-    reputation: [20, 50],
-  },
-  highway: {
-    minResidents: 1000,
-    minDistance: 5000,
-    contractMonths: [36, 60],
-    accessMaxLength: 1000,
-    maxDetour: 1.5,
-    graceDays: 30,
-    lanes: [[0, 1], [2000, 2], [4000, 3]],
-    buildPerMetreAndLane: 39,
-    upkeepPerMetreAndLane: 78,
-    margin: 1.2,
-    years: 12,
-    townExperience: [25, 50],
-    distances: [5000, 8000, 12000, 16000, 20000],
-    fine: [40, 80],
-    reputation: [10, 40],
-  },
-};
-
-// Tiles sorted by name. rules() gives the four blocks of a type for the current settings; extra()
-// adds a chart or table below them.
-const TYPES = [
-  { id: "investment_contract", name: "Investment Contract", pitch: "A town wants goods nobody supplies.", rules: investmentRules, extra: investmentExtra },
-  { id: "prospecting_contract", name: "Prospecting Contract", pitch: "A raw material with no source nearby.", rules: prospectingRules },
-  { id: "regional_network", name: "Regional Network", pitch: "3–4 neighbouring towns want one region.", rules: regionalRules },
-  { id: "eco_contract", name: "Eco Contract", pitch: "A factory you serve pollutes a town.", rules: ecoRules },
-  { id: "rail_connection", name: "Rail Connection", pitch: "Towns linked only by bus want a train.", rules: railRules },
-  { id: "tram_network", name: "Tram Network", pitch: "A growing town wants trams.", rules: tramRules },
-  { id: "industry_expansion", name: "Industry Expansion", pitch: "An industry you serve could grow.", rules: expansionRules },
-  { id: "traffic_relief", name: "Traffic Relief", pitch: "A town is choking on traffic.", rules: trafficRules },
-  { id: "workers_settlement", name: "Workers' Settlement", pitch: "Founds a brand-new town next to remote industries.", rules: settlementRules },
-  { id: "new_market", name: "New Market", pitch: "Goods that nobody around buys.", rules: marketRules },
-  { id: "transfer_hub", name: "Transfer Hub", pitch: "A town wants to be a transfer hub.", rules: hubRules },
-  { id: "world_exposition", name: "World Exposition", pitch: "A one-year world's fair.", rules: expositionRules },
-  { id: "intercity_express", name: "Non-stop Express", pitch: "Two distant towns want a non-stop train.", rules: expressRules },
-  { id: "highway_concession", name: "Highway Concession", pitch: "Two distant towns want a highway.", rules: highwayRules, extra: highwayExtra },
-  { id: "industry_partnership", name: "Industry Partnership", pitch: "A factory nobody serves offers a deal.", rules: partnershipRules },
-].sort((a, b) => a.name.localeCompare(b.name, "en"));
-
-const state = { ...MOD.presets[1], year: 1920, open: TYPES[0].id };
-
-const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-const inflationAt = year => {
-  const f = MOD.inflation;
-  return clamp(f.from + (f.to - f.from) * (year - f.fromYear) / (f.toYear - f.fromYear), f.from, f.to);
-};
-const costCurveAt = year => {
-  const c = MOD.costYearCurve;
-  if (year <= c[0][0]) return c[0][1];
-  for (let i = 1; i < c.length; i++) {
-    if (year <= c[i][0]) {
-      const [y0, v0] = c[i - 1], [y1, v1] = c[i];
-      return v0 + (v1 - v0) * (year - y0) / (y1 - y0);
-    }
-  }
-  return c[c.length - 1][1];
-};
-// Money in subsidy steps, as the game books it: inflation, rounded up to 10 000.
-const stepsToMoney = steps => Math.ceil(inflationAt(state.year) * MOD.moneyStep * steps / 10000) * 10000;
-
-const fmtMoney = v => {
-  if (v >= 1e6) return "$" + (v / 1e6).toFixed(v >= 1e7 ? 1 : 2).replace(/\.?0+$/, "") + "M";
-  return "$" + Math.round(v).toLocaleString("en-US");
-};
-const fmtRange = (a, b) => a === b ? fmtMoney(a) : `${fmtMoney(a)}–${fmtMoney(b)}`;
-const fmtInt = v => Math.round(v).toLocaleString("en-US");
-const money = (a, b) => `<span class="money">${fmtRange(a, b)}</span>`;
-// Money of a step range, times a share (an upfront third, a reward factor).
-const steps = (a, b, share = 1) => money(stepsToMoney(a) * share, stepsToMoney(b) * share);
-const n = v => `<span class="num">${fmtInt(v)}</span>`;
-// The contract time, shown as its own row at the end of the task block.
-const timeLimit = (a, b, note) => ({ time: a === b ? `${a} months` : `${a}–${b} months`, note });
-const pct = v => `${Math.round(v * 100)} %`;
-const byRisk = table => table[state.risk];
-const years = m => m % 12 === 0 ? `${m / 12} year${m === 12 ? "" : "s"}` : `${m} months`;
-const el = id => document.getElementById(id);
-// Parts of one reward that come together.
-const both = (...parts) => ({ parts });
-// Rewards of which one is picked per offer, each a string or both(...), shown as cards side by side.
-const choice = (...options) => ({ options: options.map(o => o.parts || [o]) });
-const icon = id => `<span class="icon"><img src="${ICONS[id]}" alt=""></span>`;
-
-// How the money of a reward follows the target: in full from ref units, in proportion below, at least a quarter.
-const scaledMoney = ref => `The money shown is for a target of ${fmtInt(ref)} units or more. A smaller target pays less in proportion: ${fmtInt(ref / 2)} units pay half, never less than a quarter.`;
-const XP_TOWN = "20–100 % level progress in the town";
-const XP_EACH = "25–50 % level progress in each town";
-const DIFFICULTY_FREE = "None of these amounts change with difficulty.";
-
-// A share by risk with the variation of an offer (±20 % of it), as a range ("16–24 %").
-const shareRange = share => `${Math.round(share * 80)}–${Math.round(share * 120)} %`;
-// A target from residents: share by risk, clamped.
-const ridesTarget = (shareTable, min, max, of) =>
-  `${shareRange(byRisk(shareTable))} of ${of}, at least ${n(min)}, at most ${n(max)}`;
-// A target from what can be delivered: share by risk of possible units.
-const workShare = () => shareRange(byRisk(MOD.townDeliveryShare));
-
-// The three reward sets of the base subsidies, one picked per offer. income: what the 2× income applies to.
-function rewardVariants(set, income, { share = 1, xp = XP_TOWN } = {}) {
-  const sets = {
-    base: [{ money: [50, 150], xp: true }, { boost: 60, xp: true }, { money: [27, 67], boost: 24 }],
-    work: [{ money: [85, 115], xp: true }, { boost: 60, xp: true }, { money: [40, 55], boost: 24 }],
-  };
-  return [choice(...sets[set].map(v => {
-    const parts = [];
-    if (v.money) parts.push(steps(v.money[0], v.money[1], share));
-    if (v.boost) parts.push(`2× income ${income} for ${years(v.boost)}`);
-    if (v.xp && xp) parts.push(xp);
-    return both(...parts);
-  }))];
-}
-
-// Explanations behind the (i) buttons. Terms in a list get theirs automatically (annotate).
-const TIP = {
-  ranges: "Each offer rolls its own values within these ranges. The offer window in the game shows the exact numbers before you accept.",
-  time: "Counts from the day you accept. The contract is fulfilled the moment the task is done, not at the end of the time.",
-  level: "Experience towards the town's next level, as in the base game's subsidies: 100 % is a whole level, and more carries into the next one.",
-  reputation: "Your reputation in the town, from 0 to 100 %. A loss takes these points off, down to 0 at most. A gain makes up for earlier losses, up to 100 %.",
-  income: "The income of the rides or goods named here is doubled for that time.",
-  upfront: "Paid when you accept, and yours to keep when you fulfil the contract. If you fail, you pay it back on top of the fine.",
-  inflation: "Inflation of the game year: ×1 in 1900, ×4 from 2000. Highway payments stay the same.",
-  risk: "The game's subsidy risk setting. A higher risk asks for bigger targets.",
-  pollution: "The game's pollution scale, which runs from 60 to 74 dB.",
-  booster: "Extra supplies that raise its production, listed under Boosters in the industry window.",
-};
-// An (i) button that shows text on hover, focus or tap; end: opens to the left, for buttons near the right edge.
-const tip = (text, end) => `<span class="tip${end ? " end" : ""}"><button type="button" class="tip-btn" aria-label="Explain">i</button><span class="tip-text" role="tooltip">${text}</span></span>`;
-const TERMS = [[/level progress/, TIP.level], [/reputation/, TIP.reputation], [/2× income/, TIP.income], [/upfront money/i, TIP.upfront]];
-// Adds the (i) of each term after its first mention in a line. Tooltips go in as placeholders first, so a term
-// inside an explanation is not annotated again.
-function annotate(html) {
-  const inserted = [];
-  for (const [re, text] of TERMS) {
-    html = html.replace(re, m => { inserted.push(tip(text)); return `${m}\u0000${inserted.length - 1}\u0000`; });
-  }
-  return html.replace(/\u0000(\d+)\u0000/g, (_, i) => inserted[Number(i)]);
-}
-
-const CLOCK = `<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.5V8l2.5 1.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-
-function renderList(items) {
-  const lines = items.map(item => {
-    if (item.options) {
-      const cards = item.options.map(parts => `<div class="option"><ul>${parts.map(part => `<li>${annotate(part)}</li>`).join("")}</ul></div>`);
-      return `<li class="options">${cards.join(`<span class="or">or</span>`)}</li>`;
-    }
-    if (item.parts) return item.parts.map(part => `<li>${annotate(part)}</li>`).join("");
-    return `<li>${annotate(item)}</li>`;
-  });
-  return `<ul>${lines.join("")}</ul>`;
-}
-function renderTime(item) {
-  return `<div class="time-limit">${CLOCK}<span class="label">Time limit${tip(TIP.time, true)}</span><span class="time">${item.time}</span>${item.note ? `<small>${item.note}</small>` : ""}</div>`;
-}
-function section(kind, title, items, note) {
-  if (!items || !items.length) return "";
-  const rangesTip = kind === "task" || kind === "complete" || kind === "failure" ? tip(TIP.ranges) : "";
-  return `<section class="sec ${kind}"><h3>${title}${rangesTip}</h3>${renderList(items)}${note ? `<span class="note">${note}</span>` : ""}</section>`;
-}
-function head(type, time) {
-  return `<div class="detail-head">${icon(type.id)}<div class="title"><h2>${type.name}</h2><p>${type.pitch}</p></div>${time ? renderTime(time) : ""}</div>`;
-}
-
-// ---- Investment Contract
-
-function investmentTargets() {
-  const inv = MOD.investment, share = byRisk(MOD.townDeliveryShare);
-  const low = Math.max(MOD.minDelivery, Math.floor(inv.factoryOutput[0] * state.productivity * inv.workMonths[0] / 12 * share * 0.8));
-  const high = Math.floor(inv.factoryOutput[1] * state.productivity * inv.workMonths[1] / 12 * share * 1.2);
-  return [low, high];
-}
-
-function investmentRules() {
-  const inv = MOD.investment;
-  const [low, high] = investmentTargets();
-  const ref = byRisk(inv.referenceUnits);
-  const factory = inv.factoryCostByTier.map(c => inv.factoryCostFactor * c * costCurveAt(state.year) * state.infraCost);
-  return {
-    offer: [
-      "A town asks for goods it gets from nobody at all.",
-      "The economy has a factory that makes them.",
-      "Each town is offered each kind of goods only once per game, whether you accept or not.",
-    ],
-    accept: ["The factory is built next to the town for free."],
-    task: [
-      `Deliver ${n(low)}–${n(high)} units of its goods to the town.<small>${workShare()} of what you could deliver in the contract time. That is what the factory makes (${fmtInt(inv.factoryOutput[0] * state.productivity)}–${fmtInt(inv.factoryOutput[1] * state.productivity)} units a year, by kind of factory) or what the town takes in, whichever is lower.</small>`,
-      "Only goods from that factory count.",
-      "The factory only produces when it gets its inputs, so bring them by your lines.",
-      timeLimit(inv.workMonths[0], inv.workMonths[1], `plus up to ${inv.travelMonthsMax} months when the factory's inputs come from far away; already included in the time limit of the offer`),
-    ],
-    complete: rewardVariants("work", "on deliveries of the goods to the town"),
-    completeNote: `One of the three, picked at random per offer. ${scaledMoney(ref)}`,
-    failure: [
-      `You pay for the factory: ${money(factory[0], factory[0])}, ${money(factory[1], factory[1])} or ${money(factory[2], factory[2])}<small>twice its build price in ${state.year}, by kind of factory</small>`,
-      `${steps(inv.fine[0], inv.fine[1])} fine<small>smaller for a smaller target, like the reward</small>`,
-      `−${inv.reputation[0]} to −${inv.reputation[1]} % reputation in the town`,
-    ],
-    failureNote: "The factory stays, whether you fulfil the contract or not.",
-  };
-}
-
-function investmentExtra() {
-  const inv = MOD.investment;
-  const ref = byRisk(inv.referenceUnits);
-  const [r1, r3] = [inv.rewards[0].money, inv.rewards[2].money];
-  const rows = [[ref / 4, MOD.minRewardShare, "or fewer"], [ref / 2, 0.5, ""], [ref, 1, "or more"]].map(([units, share, suffix]) => `<tr>
-      <td><span class="num">${fmtInt(units)}</span> ${suffix}</td>
-      <td>${steps(r1[0], r1[1], share)}</td>
-      <td>${steps(r3[0], r3[1], share)}</td>
-      <td class="fine">${steps(inv.fine[0], inv.fine[1], share)}</td>
-    </tr>`).join("");
-  return {
-    html: `<div class="extra">
-      <h3>Reward and fine by target (examples)</h3>
-      <p class="hint">Money of the first and the third reward, and the fine without the factory, for a few targets at this difficulty and year.</p>
-      <div class="table-scroll"><table>
-        <thead><tr><th>Units asked for</th><th>Money</th><th>Money with 2× income</th><th>Fine</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table></div>
-    </div>`,
-  };
-}
-
-// ---- Prospecting Contract
-
-function prospectingRules() {
-  const ref = byRisk([40, 130, 160, 195]);
-  return {
-    offer: [
-      "A town asks for a raw material it gets from nobody at all.",
-      "No industry makes it in the town's region: the town and its two nearest towns.",
-      "The material can be prospected in this economy.",
-      "Each town is offered each material only once per game.",
-    ],
-    accept: ["A free prospection for the material starts near the town; no permit needed.", "If a deposit is found, the new industry is built for free."],
-    task: [
-      `Deliver the material to the town.<small>${workShare()} of what the town takes in, or of what one new industry makes if that is less, over the contract time minus the 6 months of prospecting.</small>`,
-      "Material from any source counts, from acceptance on.",
-      "If the prospection finds nothing in the region, the contract ends without penalty.",
-      timeLimit(18, 30),
-    ],
-    complete: rewardVariants("work", "on deliveries of the material to the town", { share: 0.6 }),
-    completeNote: `One of the three, picked at random. It pays 60 % of an Investment Contract's money. ${scaledMoney(ref)}`,
-    failure: [
-      `${steps(40, 80, 0.6)} fine<small>scaled like the reward</small>`,
-      "−10 to −50 % reputation in the town",
-      "Nothing found: no penalty at all.",
-    ],
-  };
-}
-
-// ---- Regional Network
-
-function regionalRules() {
-  return {
-    offer: [
-      "A town and its 2 or 3 nearest towns: 3 or 4 towns.",
-      "At most one pair of them is already linked by your passenger lines.",
-      "The same group comes back at most once per game year.",
-    ],
-    accept: [
-      `With a money reward: a third of it now, ${steps(50, 150, 1 / 3)} or ${steps(27, 67, 1 / 3)}, the rest when fulfilled`,
-      `With income only: ${steps(20, 50)} now, yours to keep when fulfilled`,
-    ],
-    task: [
-      "Join all towns by passenger lines. Transfers are allowed, inside the group's towns.",
-      `Carry passengers between every pair of towns: 3 pairs for 3 towns, 6 for 4.<small>Each pair has its own target: ${ridesTarget([0.1, 0.25, 0.35, 0.5], 15, 700, "the smaller town's residents × 2 ÷ number of towns")}.</small>`,
-      "A trip counts once, for the towns where it starts and ends, however often the passenger changes.",
-      "Trips count only while all towns are joined.",
-      timeLimit(23, 38),
-    ],
-    complete: [...rewardVariants("base", "on rides between the towns", { xp: null }), XP_EACH],
-    completeNote: "One of the three money or income sets, minus the upfront money; the level progress comes with every set.",
-    failure: [
-      "You repay the upfront money",
-      `${steps(60, 100)} fine`,
-      "−10 to −40 % reputation in each town",
-    ],
-  };
-}
-
-// ---- Eco Contract
-
-function ecoRules() {
-  return {
-    offer: [
-      "A factory you serve, shipping or receiving goods, that is not green yet.",
-      `The town nearest to it has a pollution of 65 dB${tip(TIP.pollution)} or more, and the factory is within 1.5 km of the town's residential centre.`,
-      "Less likely in the early years: 30 % of the usual chance until 1921, rising steadily to the full chance in 1970.",
-      "Each factory is offered only once per game.",
-    ],
-    accept: [
-      `You pay ${steps(20, 40)} towards the conversion`,
-      "The factory turns green right away; no permit needed.",
-    ],
-    task: [
-      `Ship the factory's goods.<small>${workShare()} of what it makes in the contract time plus what it has in stock.</small>`,
-      "To any industry or town, on any of your lines.",
-      timeLimit(18, 30),
-    ],
-    complete: ["2× income on goods from this factory only, on any line, for 5 years", "10–30 % reputation in the town"],
-    completeNote: "No money, the income is the reward.",
-    failure: [
-      `${steps(40, 80)} fine`,
-      "−10 to −50 % reputation in the town",
-      "The factory stays green; the payment towards it is not returned.",
-    ],
-  };
-}
-
-// ---- Rail Connection
-
-function railRules() {
-  return {
-    offer: [
-      "Two neighbouring towns, one among the three nearest of the other.",
-      "Your bus line links them, no train does.",
-      "The same pair comes back at most once per game year.",
-    ],
-    task: [
-      "A train line that serves both towns.",
-      `Carry passengers between the towns by train.<small>${ridesTarget([0.1, 0.25, 0.35, 0.5], 40, 1200, "the smaller town's residents")}.</small>`,
-      "Only trains with stops in both towns count, without a change of train. A feeder bus or tram to the station is fine.",
-      "Every boarding counts, so a return trip counts twice.",
-      timeLimit(24, 36),
-    ],
-    complete: [...rewardVariants("base", "on train rides between the towns", { xp: null }), XP_EACH],
-    completeNote: "One of the three money or income sets; the level progress comes with every set.",
-    failure: [`${steps(40, 80)} fine`, "−10 to −40 % reputation in each town"],
-  };
-}
-
-// ---- Tram Network
-
-function tramRules() {
-  return {
-    offer: [
-      "A town with at least 400 residents.",
-      "It has no tram line of yours with 3 or more stops in it.",
-      "The same town comes back at most once per game year.",
-    ],
-    task: [
-      "A tram line with at least 3 stops in the town.",
-      `Tram rides within the town.<small>${ridesTarget([0.15, 0.35, 0.5, 0.7], 40, 1500, "the town's residents")}.</small>`,
-      "Each boarding counts, so a return trip counts twice.",
-      timeLimit(18, 30),
-    ],
-    complete: rewardVariants("base", "on rides within the town on the tram lines"),
-    completeNote: "One of the three, picked at random per offer.",
-    failure: [`${steps(40, 80)} fine`, "−10 to −50 % reputation in the town"],
-  };
-}
-
-// ---- Industry Expansion
-
-function expansionRules() {
-  return {
-    offer: [
-      "You ship goods from an industry that can still grow a level. Any type of industry.<small>Your lines pick up its production.</small>",
-      `At least one of its boosts is not running yet.<small>A booster good${tip(TIP.booster)} it can use is missing, or fewer than half of its workplaces are filled by workers coming by your lines.</small>`,
-      "There is room for one more building or field next to it.",
-      "This industry has not been offered the subsidy at its current level yet.<small>One offer per industry and level per game, whether you accept it, decline it or let it expire. After the industry grows, the next level can be offered.</small>",
-    ],
-    task: [
-      "All its boosts run at the same time.<small>Every booster good is in stock or was delivered recently, as the tick in the industry window shows. If the industry has workplaces, at least half of them are filled by workers who came by your lines within the last 2 years, from any town.</small>",
-      "One daily check with everything running is enough.",
-      timeLimit(12, 24),
-    ],
-    complete: [
-      "The industry grows one level for good: one more building or field and a higher output",
-      `${steps(20, 50)}`,
-    ],
-    completeNote: `If it can no longer grow by then, you get ${fmtRange(stepsToMoney(60), stepsToMoney(120))} instead of the growth, on top of the money. ${DIFFICULTY_FREE}`,
-    failure: ["−10 to −30 % reputation in the nearest town", "No fine."],
-  };
-}
-
-// ---- Traffic Relief
-
-function trafficRules() {
-  return {
-    offer: [
-      "A town with at least 400 residents and a traffic rating below 50 %.",
-      "The same town comes back at most once per game year.",
-    ],
-    task: [
-      "Raise the town's traffic rating by 20 points over the rating when the offer was made.",
-      "Keep it there for 90 days in a row. The rating is read every 5 days and averaged over the last readings; one reading below the target starts the 90 days again.",
-      timeLimit(24, 36),
-    ],
-    complete: [choice(both("10–30 % reputation", XP_TOWN), both(steps(20, 60), XP_TOWN))],
-    completeNote: `One of the two, picked at random. ${DIFFICULTY_FREE}`,
-    failure: ["−10 to −30 % reputation in the town", "No fine: jams are no fault of yours."],
-  };
-}
-
-// ---- Workers' Settlement
-
-function settlementRules() {
-  return {
-    offer: [
-      "2 to 4 industries with workplaces, all within 1.5 km of one of them.",
-      "The middle of the group is at least 2 km from the centre of every town.",
-      "At least one of them lacks workers.",
-      "There is a site for the new town.<small>Flat and dry, within 1.2 km of the group's middle, at least 250 m from the industries and 1.5 km from the map edge.</small>",
-      "An industry that started an offer does not start another one in the same game year.",
-    ],
-    accept: [
-      "A new town is founded next to the industries, asking for one commercial and one industrial good.",
-      `Upfront money: 20–40 % of the money reward, ${money(stepsToMoney(30) * 0.2, stepsToMoney(70) * 0.4)}`,
-    ],
-    task: [
-      "Residents of the settlement working at every industry at the same time: half the workplaces of each, coming by your lines.",
-      "Workers from other towns do not count.",
-      "One daily check with all of them at once is enough.",
-      timeLimit(24, 36),
-    ],
-    complete: [
-      `The rest of ${steps(30, 70)}`,
-      "20–100 % level progress in the settlement",
-      "The settlement stays and grows.",
-    ],
-    completeNote: DIFFICULTY_FREE,
-    failure: [
-      "You repay the upfront money",
-      `${steps(120, 240)} fine`,
-      "−100 % reputation in the settlement and in the nearest town",
-      "The settlement stays.",
-    ],
-    failureNote: "If no town could be founded, the contract ends and you only repay the upfront money.",
-  };
-}
-
-// ---- New Market
-
-function marketRules() {
-  const range = byRisk([[15, 45], [45, 150], [55, 190], [70, 225]]);
-  const ref = (range[0] + range[1]) / 2 * 1.5;
-  return {
-    offer: [
-      "An industry makes goods that no town in its region asks for: its nearest town and the two next ones.",
-      "A town of the region would ask for that kind of goods at its next level.<small>The district must ask for fewer than three kinds of goods.</small>",
-      "The offer names the town that gets the demand.",
-      "One New Market per town at a time; each town and goods at most once per game year.",
-    ],
-    accept: ["A new demand for the goods appears in the town.<small>One of its districts (residential, commercial or industrial, by kind of goods) starts asking for them, shown in the town window like any other demand.</small>"],
-    task: [
-      `Deliver the goods to the town.<small>${workShare()} of what the industry makes in the contract time plus its stock, at most what the town's district would take in.</small>`,
-      "Goods from any source count.",
-      timeLimit(24, 36),
-    ],
-    complete: [both(steps(30, 80), XP_TOWN), "The new demand stays in the town for good."],
-    completeNote: scaledMoney(ref),
-    failure: [`${steps(40, 80)} fine<small>scaled like the reward</small>`, "−10 to −50 % reputation in the town", "The new demand is removed from the town again."],
-  };
-}
-
-// ---- Transfer Hub
-
-function hubRules() {
-  return {
-    offer: [
-      "A town with at least 300 residents and a station of yours where a passenger line stops.",
-      "No hub there reaches 3 other towns yet.",
-      "The same town comes back at most once per game year.",
-    ],
-    task: [
-      "One station, or stations within 300 m of it, with direct lines to 2–3 other towns (the offer names how many).",
-      `Transfers at the hub.<small>${ridesTarget([0.05, 0.1, 0.15, 0.2], 15, 400, "the town's residents")}.</small>`,
-      "A transfer is a boarding at the hub by a passenger travelling between two other towns: a passenger from town B to town C who boards at the hub counts as one. Transfers count only while the hub reaches enough towns.",
-      timeLimit(24, 36),
-    ],
-    complete: ["2× income on the lines from the hub to the other towns for 24–36 months", "10–30 % reputation in the town", XP_TOWN],
-    completeNote: "No money, the income is the reward.",
-    failure: [`${steps(40, 80)} fine`, "−10 to −50 % reputation in the town"],
-  };
-}
-
-// ---- World Exposition
-
-function expositionRules() {
-  return {
-    offer: [
-      "A town with at least 500 residents.",
-      "Your passenger lines serve it.",
-      "The map has at least 5 towns.",
-      "The same town comes back at most once per game year.",
-    ],
-    offerNote: "The host is picked at random among the five biggest towns that qualify.",
-    accept: ["A free marketing campaign in the town for the year of the exposition."],
-    task: [
-      `Bring visitors to the town.<small>${ridesTarget([0.1, 0.2, 0.3, 0.4], 60, 1500, "the town's residents")}.</small>`,
-      "From at least 4 other towns, with at least 10 visitors each.",
-      "A visitor is a passenger arriving by your lines from another town, counted for the town where the trip started. Each arrival counts.",
-      timeLimit(12, 12, "the exposition runs for one year"),
-    ],
-    complete: [both(steps(30, 80), XP_TOWN), "10–20 % reputation in up to 6 towns that sent the most visitors"],
-    failure: [`${steps(20, 40)} fine`, "−10 to −40 % reputation in the town"],
-  };
-}
-
-// ---- Non-stop Express
-
-function expressRules() {
-  return {
-    offer: [
-      "Two towns with at least 500 residents each, at least 5 km apart.",
-      "No non-stop train links them yet.",
-      "The same pair comes back at most once per game year.",
-    ],
-    offerNote: "The pair whose smaller town is the biggest is offered first.",
-    accept: [`Upfront money: ${steps(20, 50)}`],
-    task: [
-      "A train line with stops only in the two towns; several stations in a town are fine.",
-      `Carry passengers between the towns on it.<small>${ridesTarget([0.1, 0.2, 0.3, 0.4], 100, 2000, "the smaller town's residents")}.</small>`,
-      "Each boarding counts, so a return trip counts twice.",
-      timeLimit(24, 36),
-    ],
-    complete: ["2× income on rides between the towns, on every non-stop line between them, for 7 years", XP_EACH],
-    important: {
-      intro: "The express must stay non-stop for all 7 years. The bonus is at risk when:",
-      items: [
-        "the line gets a stop outside the two towns,",
-        "a stop no longer serves its town,",
-        "the line is removed.",
-      ],
-      outro: "You then get 30 days, with a reminder a week before the end. Not non-stop again by then, the bonus ends for good, without a penalty.",
-    },
-    failure: ["You repay the upfront money", `${steps(40, 80)} fine`, "−10 to −40 % reputation in each town"],
-  };
-}
-
-// ---- Highway Concession
-
-const perLane = d => {
-  const hw = MOD.highway;
-  return Math.round(d * (hw.buildPerMetreAndLane * state.infraCost + hw.upkeepPerMetreAndLane * state.infraMaint) * hw.margin / 12 / 1000) * 1000;
-};
-
-function highwayRules() {
-  const hw = MOD.highway;
-  const lanesText = hw.lanes.map(([from, lanes], i) => {
-    const to = hw.lanes[i + 1] ? hw.lanes[i + 1][0] : null;
-    const range = to ? (from === 0 ? `under ${fmtInt(to)}` : `${fmtInt(from)}–${fmtInt(to - 1)}`) : `${fmtInt(from)} or more`;
-    const sign = `<span class="lanes-sign" aria-hidden="true">${"<span></span>".repeat(lanes)}</span>`;
-    return `${sign}<b>${lanes} lane${lanes > 1 ? "s" : ""}</b> each way when the smaller town has ${range} residents`;
-  });
-  return {
-    offer: [
-      `Two towns with at least ${n(hw.minResidents)} residents each.`,
-      `Their centres at least <span class="num">${hw.minDistance / 1000} km</span> apart in a straight line.`,
-      "No highway links them yet, and highways are available in the game year.",
-      "The same two towns are offered at most once per game year.",
-    ],
-    task: [
-      "Build a highway between the two towns: you can drive from one to the other and back on highway.",
-      `Outside the towns the road is highway all the way; ordinary roads only to get from a town onto the highway, at most <span class="num">${hw.accessMaxLength / 1000} km</span> each.`,
-      `The route is at most <span class="num">${hw.maxDetour}×</span> the straight line between the towns.`,
-      ...lanesText,
-      "The lanes are set in the offer and stay the same when the towns grow. The towns pay for the lanes they asked for, not for extra ones.",
-      timeLimit(hw.contractMonths[0], hw.contractMonths[1]),
-    ],
-    complete: [`Monthly payments for ${hw.years} years from the day the highway opens, as long as it stays open (table below)`, XP_EACH],
-    important: {
-      intro: `The highway must stay connected for all ${hw.years} years. It counts as cut when:`,
-      items: [
-        "a piece of it is missing,",
-        "one direction is gone,",
-        `a stretch of ordinary road is longer than <span class="num">${hw.accessMaxLength / 1000} km</span>,`,
-        "it has fewer lanes than the towns asked for,",
-        `the route is longer than <span class="num">${hw.maxDetour}×</span> the straight line.`,
-      ],
-      outro: `A cut highway is paid for ${hw.graceDays} more days. Not reconnected by then, the payments stop for good. There is no fine. Rebuild bridges and junctions within that time.`,
-    },
-    failure: [`${steps(hw.fine[0], hw.fine[1])} fine`, `−${hw.reputation[0]} to −${hw.reputation[1]} % reputation in each town`],
-  };
-}
-
-function highwayExtra() {
-  const hw = MOD.highway;
-  const rows = hw.distances.map(d => `<tr><td class="num">${(d / 1000).toFixed(0)} km</td>${[1, 2, 3].map(lanes => {
-    const month = perLane(d) * lanes;
-    return `<td><span class="num">${fmtMoney(month)}</span><span class="sub num">${fmtMoney(month * hw.years * 12)} in all</span></td>`;
-  }).join("")}</tr>`).join("");
-  return {
-    html: `<div class="extra">
-      <h3>Monthly payments (examples)</h3>
-      <p class="hint">Paid by the straight-line distance between the town centres, not by the road you build. The towns pay what building and keeping up a lane in both directions on a route about 1.3 times that long costs over the concession, plus 20 %, at infrastructure cost ×${state.infraCost} and upkeep ×${state.infraMaint}. Road prices do not rise with the years, so neither do the payments.</p>
-      <div class="table-scroll"><table>
-        <thead><tr><th>Straight line</th><th>1 lane</th><th>2 lanes</th><th>3 lanes</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table></div>
-    </div>`,
-  };
-}
-
-// ---- Industry Partnership
-
-function partnershipRules() {
-  return {
-    offer: [
-      "A factory nobody serves: nothing shipped from it or delivered to it in the last year.",
-      "It is one of the eight factories with a perk (below).",
-      "The same factory comes back at most once per game year.",
-    ],
-    task: [
-      `Ship its goods.<small>${workShare()} of what it makes at full supply in the contract time plus its stock.</small>`,
-      "It only produces when it gets its inputs, so bring them by your lines first.",
-      "To any industry or town, on any of your lines.",
-      timeLimit(18, 30),
-    ],
-    complete: [
-      `A vehicle perk for 12 months, by factory:<small>Furniture factory: +5 % comfort in all vehicles<br>Chemical plant: −10 % pollution from all vehicles<br>Tire factory: −10 % noise from road vehicles<br>Textile factory: +10 % comfort in trains<br>Glass works: +10 % comfort in buses and trams<br>Oil refinery: −10 % pollution from road vehicles<br>Vehicle factory: +5 % top speed of road vehicles<br>Machine factory: +5 % top speed of trains</small>`,
-      "10–30 % reputation in the nearest town",
-    ],
-    completeNote: "No money. All your vehicles of that kind get the perk at once, new ones within a week; it ends for all after 12 months.",
-    failure: [`${steps(10, 20)} fine`, "−10 to −30 % reputation in the nearest town"],
-  };
-}
-
-function renderDetail() {
-  const type = TYPES.find(t => t.id === state.open) || TYPES[0];
-  const r = type.rules();
-  const extra = type.extra ? type.extra() : null;
-  const time = r.task.find(i => i && i.time);
-  el("detail").innerHTML = head(type, time) + `<div class="sections">
-    ${section("offer", "When it is offered", r.offer, r.offerNote)}
-    ${section("accept", "On acceptance", r.accept)}
-    ${section("task", "To fulfil", r.task.filter(i => i !== time))}
-    ${r.important ? `<aside class="important"><h3>Important</h3><p>${r.important.intro}</p><ul>${r.important.items.map(i => `<li>${i}</li>`).join("")}</ul><p>${r.important.outro}</p></aside>` : ""}
-    ${section("complete", "On fulfilment", r.complete, r.completeNote)}
-    ${section("failure", "On failure", r.failure, r.failureNote)}
-  </div>` + (extra ? extra.html : "");
-  if (extra && extra.after) extra.after();
-}
-
-// The list is built once, so its scroll position stays when the details change.
-el("tiles").innerHTML = TYPES.map(t => `
-  <button type="button" class="tile" data-id="${t.id}" aria-expanded="false" aria-controls="detail">
-    ${icon(t.id)}
-    <span class="tile-text"><span class="name">${t.name}</span><span class="pitch">${t.pitch}</span></span>
-    <span class="chev" aria-hidden="true">›</span>
-  </button>`).join("");
-
-function renderTiles() {
-  for (const tile of el("tiles").children) tile.setAttribute("aria-expanded", String(tile.dataset.id === state.open));
-}
-
-
-function renderSettings() {
-  const preset = MOD.presets.find(p => p.risk === state.risk && p.infraCost === state.infraCost && p.infraMaint === state.infraMaint && p.productivity === state.productivity);
-  el("difficulty").innerHTML = MOD.presets.map(p =>
-    `<button type="button" data-id="${p.id}" aria-pressed="${!!preset && preset.id === p.id}">${p.label}</button>`).join("")
-    + (preset ? "" : `<button type="button" aria-pressed="true" disabled>Custom</button>`);
-  el("year-out").textContent = state.year;
-  el("inflation").textContent = `money ×${inflationAt(state.year).toFixed(2)}`;
-  for (const id of ["risk", "infraCost", "infraMaint", "productivity"]) el(id).value = state[id];
-}
-
-function render() {
-  renderSettings();
-  renderTiles();
-  renderDetail();
-}
-
-function fillSelect(id, values, label) {
-  el(id).innerHTML = values.map(v => `<option value="${v}">${label(v)}</option>`).join("");
-}
-fillSelect("risk", [0, 1, 2, 3], v => MOD.presets[v].label);
-el("inflation-tip").innerHTML = tip(TIP.inflation);
-el("risk-tip").innerHTML = tip(TIP.risk);
-fillSelect("infraCost", MOD.scales, v => `×${v}`);
-fillSelect("infraMaint", MOD.scales, v => `×${v}`);
-fillSelect("productivity", MOD.productivities, v => `×${v}`);
-
-el("difficulty").addEventListener("click", e => {
-  const button = e.target.closest("button[data-id]");
-  if (!button) return;
-  const { risk, infraCost, infraMaint, productivity } = MOD.presets.find(p => p.id === button.dataset.id);
-  Object.assign(state, { risk, infraCost, infraMaint, productivity });
-  render();
-});
-el("year").addEventListener("input", e => { state.year = Number(e.target.value); render(); });
-for (const id of ["risk", "infraCost", "infraMaint", "productivity"]) {
-  el(id).addEventListener("change", e => { state[id] = Number(e.target.value); render(); });
-}
-el("tiles").addEventListener("click", e => {
-  const tile = e.target.closest(".tile");
-  if (!tile) return;
-  state.open = tile.dataset.id;
-  render();
-  const detail = el("detail");
-  // Side by side the details are already in view; stacked they start below the list, so jump to their top if it is
-  // out of sight, and stay put otherwise.
-  if (matchMedia("(max-width: 52rem)").matches) {
-    const top = detail.getBoundingClientRect().top;
-    if (top < 0 || top > window.innerHeight * 0.6) detail.scrollIntoView({ block: "start" });
-  } else if (detail.getBoundingClientRect().top < 0) {
-    detail.scrollIntoView({ block: "start" });
-  }
-});
-
-// Height of the sticky settings bar, for the sticky list below it.
-const bar = document.querySelector(".settings");
-new ResizeObserver(() => document.documentElement.style.setProperty("--bar-h", bar.offsetHeight + "px")).observe(bar);
-
-const fromHash = location.hash.slice(1);
-if (TYPES.some(t => t.id === fromHash)) state.open = fromHash;
-render();
-</script>
 
 </body>
 </html>

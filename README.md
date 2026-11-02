@@ -1,17 +1,22 @@
-# Subsidies+ Docs
+# darthbane426 TF3 mod guides
 
-Player guide for the Transport Fever 3 mod Subsidies+: when each subsidy is offered, what it asks for, and what you
-get or lose, recalculated for the difficulty and game year you pick.
+Player guides for the Transport Fever 3 mods by darthbane426, served by GitHub Pages at
+https://darthbane426.github.io/.
+
+| Folder | Page |
+|---|---|
+| `/` | overview of the mods |
+| `subsidies-plus/` | Subsidies+ |
+| `waste-industry/` | Waste Industry |
 
 ## Build
 
 ```
-python make_icons.py <path to darthbane426_subsidies_plus/content/subventions> icons.js
 python build.py
 ```
 
-`template.html` is the source. `build.py` puts the icons in and writes `index.html`, the page GitHub Pages serves.
-Run `make_icons.py` again only when the mod's icons change (needs Pillow).
+Every page is a `template.html` in its folder. `build.py` puts in the shared look (`shared/site.css`), the
+navigation between the pages and the page's icons, and writes the `index.html` next to it. Commit the built
+`index.html` files too: GitHub Pages serves them as they are.
 
-The amounts follow the mod's constants, which are written into the `MOD` object and the rules in `template.html`.
-When the mod's numbers change, update them there and rebuild.
+`python build.py --fragment DIR` also writes each page without the document skeleton, for a Claude artifact.
