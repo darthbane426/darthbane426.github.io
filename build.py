@@ -28,7 +28,7 @@ def make_nav(current):
     def current_attr(folder):
         return ' aria-current="page"' if folder == current else ""
 
-    links = [f'<a class="home" href="{prefix}"{current_attr("")}>darthbane426 · TF3 mods</a>']
+    links = [f'<a class="home" href="{prefix}"{current_attr("")}>Transport Fever 3 Mods</a>']
     for folder, label in MOD_PAGES:
         if (HERE / folder / "template.html").exists():
             links.append(f'<a href="{prefix}{folder}/"{current_attr(folder)}>{label}</a>')
