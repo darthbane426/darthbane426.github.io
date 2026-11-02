@@ -199,6 +199,23 @@ footer p { margin: 0 0 0.4rem; max-width: 48rem; }
 .tile .icon { background: var(--paper); overflow: hidden; }
 .tile .icon img { width: 100%; height: 100%; object-fit: cover; }
 .tile .icon img.glyph { width: 2.25rem; height: 2.25rem; object-fit: contain; }
+.tile .icon.mark { background: var(--tile); color: var(--tile-ink); font-family: var(--display); font-weight: 700; font-size: 1.7rem; }
+.tile .icon.mark svg { width: 1.8rem; height: 1.8rem; }
+/* Quickstart: what the mod changes, before the steps */
+.about { display: flex; flex-direction: column; gap: 0.5rem; border-left: 4px solid var(--tile); background: var(--paper); border-radius: 6px; padding: 0.8rem 1rem; }
+.about p { margin: 0; }
+.about .big { font-family: var(--display); font-weight: 700; font-size: 1.35rem; line-height: 1.2; }
+.about .recipe img { width: 1.5rem; height: 1.5rem; }
+/* Settings */
+.setting { display: flex; flex-direction: column; gap: 0.5rem; }
+.setting h3 { font-family: var(--display); font-weight: 700; font-size: 1.3rem; margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.75rem; }
+.setting h3 .where { font-family: var(--body); font-weight: 400; font-size: 0.9rem; color: var(--muted); }
+.setting p { margin: 0; }
+.values { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+.values li { padding: 0.45rem 0.7rem; border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); }
+.values li b { font-family: var(--display); font-size: 1.05rem; margin-right: 0.4rem; }
+.values li.chosen { border-color: var(--tile); box-shadow: inset 0 0 0 1px var(--tile); }
+.values small { color: var(--muted); }
 .detail .lead { margin: 0; color: var(--muted); }
 .part-title { font-family: var(--display); font-weight: 700; font-size: clamp(1.8rem, 4.5vw, 2.4rem); line-height: 1; margin: 0; }
 .part-sub { font-family: var(--display); font-weight: 700; font-size: 1.25rem; margin: 0 0 0.4rem; }
@@ -526,12 +543,16 @@ function quickstartHtml() {
       later: true,
     },
   ];
-  return `<ol class="steps">${steps.map(s =>
+  const about = `<div class="about">
+      <p class="big">Towns now make ${cargoRef("waste")}. From 1970 recycling bins also collect ${cargoRef("recyclables")}.</p>
+      <p>Collect it with street bins and trucks and take it to a landfill, an incinerator or, sorted, to a sorting plant that makes raw materials.</p>
+      <small>A big town without enough bins loses reputation and grows slower, or stops growing.</small>
+    </div>`;
+  return `${about}<ol class="steps">${steps.map(s =>
     `<li${s.later ? ' class="later"' : ""}><h3>${s.title}</h3><p>${s.text}</p><small>${s.note}</small></li>`).join("")}</ol>
     <div><h3 class="part-sub">Good to know</h3><ul class="know-list">
       <li>The game's "Supply Industry" subsidy never picks a landfill, the incinerator or a sorting plant as its target.</li>
       <li>The mod changes saved games for good (new cargo, bins, landfills). Removing it from a save breaks the save.</li>
-      <li>Mod settings: "Town waste rules" sets how strictly towns demand bins. "Waste test mode" is only for testing: it adds test buildings, logs reports and pauses the game after six months.</li>
     </ul></div>`;
 }
 
@@ -652,10 +673,41 @@ function cargoHtml() {
   }).join("")}</div>`;
 }
 
+const GEAR = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1L11 21h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>';
+
+// ---- Settings
+
+function settingsHtml() {
+  const rulesValues = MOD.townRules.map((t, i) => `<li${i === state.risk ? ' class="chosen"' : ""}><b>${MOD.presets[i].label}</b>`
+    + `bins needed above ${fmt(t.minPop)} inhabitants; growth stops above ${fmt(t.stopPop)} below ${pct(t.stopBelow)} coverage`
+    + `<br><small>Reputation loss at most ${pct(t.maxLoss)}; growth comes back at ${pct(t.recoverAt)} coverage.${i === 1 ? " Default." : ""}</small></li>`).join("");
+  return `<div class="setting">
+      <h3>Town waste rules <span class="where">mod setting</span></h3>
+      <p>How strictly towns demand waste bins.</p>
+      <ul class="values">${rulesValues}</ul>
+    </div>
+    <div class="setting">
+      <h3>Waste test mode <span class="where">mod setting, Off by default</span></h3>
+      <p>Only for test games: adds test buildings to the menu, writes a report to the game log every month and pauses the game after six months.</p>
+    </div>
+    <div class="setting">
+      <h3>Reputation <span class="where">game setting, new game</span></h3>
+      <p>Switched off, waste does not affect town growth. Bins still collect and full bins still pollute.</p>
+    </div>
+    <div class="setting">
+      <h3>Industry productivity <span class="where">game setting, difficulty</span></h3>
+      <p>Towns make the same waste at every productivity. Landfills, the incinerator and the sorting plant work faster or slower with it, like other industries.</p>
+    </div>
+    <div class="setting">
+      <h3>Economy <span class="where">game setting, new game</span></h3>
+      <p>Decides who takes bottom ash and recovered paper: see Chains with the climate set above.</p>
+    </div>`;
+}
+
 // ---- Parts of the guide, shown as tiles on the left
 
 const PARTS = [
-  { id: "quickstart", name: "Quickstart", pitch: "Five steps to a working waste service.", icon: "build:waste_bin_new", html: quickstartHtml },
+  { id: "quickstart", name: "Quickstart", pitch: "What the mod does, and five steps to start.", mark: "1", html: quickstartHtml },
   { id: "chains", name: "Chains", pitch: "Where each cargo comes from and goes.", icon: "cargo:waste", glyph: true, html: chainsHtml,
     lead: "Faded: not built yet in the chosen year, or missing in the chosen climate." },
   { id: "buildings", name: "Buildings", pitch: "Bins, landfills, the incinerator, the sorting plant.", icon: "build:incinerator", html: buildingsHtml,
@@ -663,11 +715,13 @@ const PARTS = [
   { id: "towns", name: "Towns and waste", pitch: "What towns expect, and what happens if not.", icon: "build:waste_stop_new", html: townsHtml },
   { id: "cargo", name: "Cargo", pitch: "Six new cargos and who takes them.", icon: "cargo:recyclables", glyph: true, html: cargoHtml,
     lead: "Any bulk or universal truck, wagon or ship carries them." },
+  { id: "settings", name: "Settings", pitch: "What each setting changes.", mark: GEAR, html: settingsHtml,
+    lead: "Mod settings: the gear icon next to the mod in the mod list." },
 ];
 
 function renderTiles() {
   el("tiles").innerHTML = PARTS.map(p => `<button type="button" class="tile" data-part="${p.id}" aria-expanded="${p.id === state.part}">
-      <span class="icon">${img(p.icon, p.glyph ? "glyph" : "")}</span>
+      ${p.mark ? `<span class="icon mark" aria-hidden="true">${p.mark}</span>` : `<span class="icon">${img(p.icon, p.glyph ? "glyph" : "")}</span>`}
       <span class="tile-text"><span class="name">${p.name}</span><span class="pitch">${p.pitch}</span></span>
       <span class="chev" aria-hidden="true">›</span></button>`).join("");
 }
@@ -677,7 +731,7 @@ function renderDetail() {
   el("detail").innerHTML = `<div><h2 class="part-title">${part.name}</h2>${part.lead ? `<p class="lead">${part.lead}</p>` : ""}</div>${part.html()}`;
 }
 
-// ---- Settings
+// ---- Settings bar
 
 function renderSettings() {
   el("difficulty").innerHTML = MOD.presets.map(p =>
