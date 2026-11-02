@@ -42,13 +42,14 @@
 .steps li::before { content: counter(step); font-family: var(--display); font-weight: 700; font-size: 1.6rem; line-height: 1; color: var(--tile); }
 .steps h3 { font-family: var(--display); font-weight: 700; font-size: 1.25rem; line-height: 1.15; margin: 0; }
 .steps p { margin: 0; }
-.steps small, .chain small, .cargo-card small { color: var(--muted); font-size: 0.86rem; display: block; }
+.steps small, .chain small { color: var(--muted); font-size: 0.86rem; display: block; }
 .steps li.later { border-style: dashed; }
 
 /* Chains: stages left to right, wrapping on narrow screens */
 .chains { display: flex; flex-direction: column; gap: 1rem; }
 .chain { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 0.9rem 1rem 1rem; }
 .chain h3 { font-family: var(--display); font-weight: 700; font-size: 1.25rem; margin: 0 0 0.6rem; }
+.chain .flow + .flow { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--rule); }
 .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 .flow .arrow { color: var(--muted); font-size: 1.2rem; }
 .stage { display: flex; flex-direction: column; gap: 0.35rem; }
@@ -75,7 +76,7 @@ a.node:hover, a.node:focus-visible { border-color: var(--tile); }
 .bpick img { width: 100%; aspect-ratio: 8 / 5; object-fit: cover; border-radius: 5px; }
 .bpick:hover { border-color: var(--tile); }
 .bpick[aria-pressed="true"] { border-color: var(--tile); box-shadow: inset 0 0 0 1px var(--tile); font-weight: 600; }
-.bpick.off { opacity: 0.55; }
+.bpick small { color: var(--muted); font-weight: 400; }
 .detail-head .picture { width: 12rem; max-width: 100%; aspect-ratio: 8 / 5; object-fit: cover; border-radius: 8px; border: 1px solid var(--rule); }
 .sec.build { --sec: var(--muted); }
 .sec.works { --sec: var(--task); }
@@ -96,13 +97,14 @@ a.node:hover, a.node:focus-visible { border-color: var(--tile); }
 tr.chosen td { background: var(--band-warn); font-weight: 600; }
 
 /* Cargo */
-.cargo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 0.75rem; }
-.cargo-card { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 0.8rem 1rem 0.9rem; display: flex; flex-direction: column; gap: 0.3rem; }
-.cargo-card h3 { display: flex; align-items: center; gap: 0.5rem; font-family: var(--display); font-weight: 700; font-size: 1.25rem; margin: 0; }
-.cargo-card h3 img { width: 2rem; height: 2rem; }
-.cargo-card p { margin: 0; }
-.cargo-card .off { opacity: 0.45; }
+/* Cargo table: wrapping text cells, the cargo name kept on one line */
+.cargo-table td { white-space: normal; text-align: left; vertical-align: top; }
+.cargo-table th { text-align: left; }
+.cargo-table td:first-child { white-space: nowrap; font-weight: 600; }
+.cargo-table .recipe { flex-wrap: nowrap; }
+.cargo-table tr.off td { opacity: 0.45; }
 
+.trouble { display: flex; flex-direction: column; gap: 1rem; }
 .know-list { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.35rem; max-width: 50rem; }
 footer a { color: inherit; }
 </style>
@@ -302,12 +304,10 @@ const paperClimate = () => ["subarctic", "all"].includes(state.climate);
 const tropic = () => state.climate === "tropic";
 const rules = () => MOD.townRules[state.risk];
 
-// Whether a building, cargo or base industry exists in the chosen year and climate; the reason if not.
-function missing(item) {
-  if (item.from && state.year < item.from) return `from ${item.from}`;
-  if (item.climates && !item.climates.includes(state.climate)) return "not in this climate";
-  return "";
-}
+// Whether an item is missing in the chosen climate; the reason if so.
+const missingInClimate = item => item.climates && !item.climates.includes(state.climate) ? "not in this climate" : "";
+// Label of a node in the chains: missing in the climate, or the year from which it exists.
+const nodeNote = item => missingInClimate(item) || (item.from ? `from ${item.from}` : "");
 const building = id => BUILDINGS.find(b => b.id === id);
 const lookFor = b => b.looks.find(l => (!l.from || state.year >= l.from) && (!l.to || state.year < l.to)) || b.looks[b.looks.length - 1];
 
@@ -317,20 +317,29 @@ function quickstartHtml() {
   const r = rules();
   const steps = [
     {
-      title: "Put waste bins in town",
-      text: `Build waste bins along the streets; each collects within ${MOD.binReach} m.`,
-      note: `From ${MOD.townRulesFrom}, towns of more than ${fmt(r.minPop)} inhabitants need them.`,
+      title: "Build a landfill",
+      text: "Road → Waste → Landfill. Outside the town, next to a road; it has its own truck stop.",
+      note: "Once it holds waste it cannot be demolished until it is empty: leave room for the town to grow.",
     },
-    { title: "Build a landfill", text: "Near the town, next to a road. It takes waste and buries it.", note: "It cannot be demolished while it holds waste." },
-    { title: "Run a truck line", text: "Bins → landfill, with bulk or universal trucks. Waste pays like any cargo.", note: "Several bins can share one line." },
+    {
+      title: "Put waste bins in town",
+      text: `Road → Waste → Waste bin, along the streets. Each collects from the buildings within ${MOD.binReach} m.`,
+      note: `A bin serves one side of the street. From ${MOD.townRulesFrom}, towns of more than ${fmt(r.minPop)} inhabitants need bins.`,
+    },
+    { title: "Run a truck line", text: "Bins → landfill, with bulk or universal trucks. Several bins can share one line.", note: "Waste pays like any cargo." },
+    {
+      title: "Check that it works",
+      text: "Trucks load at the bins and unload at the landfill. A bin's window shows its waste a year and its store.",
+      note: `A full bin (${MOD.binStock} waste) stinks and pollutes the street: add trucks or bins.`,
+    },
     {
       title: "Watch the Waste card",
       text: "The town window shows how much of the town's waste your bins reach.",
-      note: "Too little coverage slows the town down; big towns stop growing.",
+      note: "It counts reach, not collection: a full bin still counts, but pollutes.",
     },
     {
       title: "Later: burn and recycle",
-      text: "The incinerator turns waste into bottom ash for cement and bricks; recycling bins and the sorting plant make raw materials.",
+      text: "The incinerator burns waste, outside the tropic climate into bottom ash for cement and bricks. Recycling bins and the sorting plant make raw materials.",
       note: "Incinerator from 1925, recycling from 1970.",
       later: true,
     },
@@ -350,20 +359,21 @@ function quickstartHtml() {
 
 // ---- Chains
 
+const nodeTail = item => {
+  const note = nodeNote(item);
+  return note ? ` <span class="why">${note}</span>` : "";
+};
 const nodeBuilding = id => {
   const b = building(id);
-  const why = missing(b);
-  return `<a class="node${why ? " off" : ""}" href="#b-${id}" data-open="${id}">${img("build:" + lookFor(b).icon, "thumb")}${b.name}${why ? ` <span class="why">${why}</span>` : ""}</a>`;
+  return `<a class="node${missingInClimate(b) ? " off" : ""}" href="#b-${id}" data-open="${id}">${img("build:" + lookFor(b).icon, "thumb")}${b.name}${nodeTail(b)}</a>`;
 };
 const nodeCargo = id => {
   const c = CARGO[id];
-  const why = missing(c);
-  return `<a class="node cargo${why ? " off" : ""}" href="#cargo" data-part="cargo">${img("cargo:" + id)}${c.name}${why ? ` <span class="why">${why}</span>` : ""}</a>`;
+  return `<a class="node cargo${missingInClimate(c) ? " off" : ""}" href="#cargo" data-part="cargo">${img("cargo:" + id)}${c.name}${nodeTail(c)}</a>`;
 };
 const nodeBase = id => {
   const b = BASE[id];
-  const why = missing(b);
-  return `<span class="node base${why ? " off" : ""}">${b.name}${why ? ` <span class="why">${why}</span>` : ""}</span>`;
+  return `<span class="node base${missingInClimate(b) ? " off" : ""}">${b.name}${nodeTail(b)}</span>`;
 };
 const stage = nodes => `<div class="stage">${nodes.join("")}</div>`;
 const arrow = '<span class="arrow" aria-hidden="true">→</span>';
@@ -388,7 +398,8 @@ function chainsHtml() {
           ["scrap", ["steel"]], ["cullet", ["glass"]], ["plastic", ["tools", "machines"]], ["waste_paper", ["paper"]],
         ].map(([cargo, to]) => `<div class="branch">${nodeCargo(cargo)}${arrow}${to.map(nodeBase).join("")}</div>`).join("")
         }<div class="branch">${nodeCargo("waste")}${arrow}${nodeBuilding("landfill_small")}${nodeBuilding("incinerator")}</div></div>`)
-        + `<small>Steel mills take scrap instead of iron ore (coal is still needed), glass works cullet instead of sand, paper mills recovered paper instead of sawdust.</small>`,
+        + flow(stage([nodeBuilding("recycling_bin"), nodeBuilding("recycling_stop")]), stage([nodeCargo("waste")]), stage([nodeBuilding("landfill_small"), nodeBuilding("incinerator")]))
+        + `<small>Half of what recycling bins collect is ordinary waste, the other half recyclables. Steel mills take scrap instead of iron ore (coal is still needed), glass works cullet instead of sand, paper mills recovered paper instead of sawdust.</small>`,
     },
   ];
   return `<div class="chains">${chains.map(c => `<div class="chain"><h3>${c.title}</h3>${c.body}</div>`).join("")}</div>`;
@@ -402,7 +413,7 @@ function section(cls, title, items) {
 
 function buildingsHtml() {
   const strip = `<div class="bstrip" role="group" aria-label="Buildings">${BUILDINGS.map(b =>
-    `<button type="button" class="bpick${missing(b) ? " off" : ""}" data-open="${b.id}" aria-pressed="${b.id === state.open}">${img("build:" + lookFor(b).icon)}${b.name}</button>`).join("")}</div>`;
+    `<button type="button" class="bpick" data-open="${b.id}" aria-pressed="${b.id === state.open}">${img("build:" + lookFor(b).icon)}${b.name}${b.from ? `<small>from ${b.from}</small>` : ""}</button>`).join("")}</div>`;
   const b = building(state.open);
   const look = lookFor(b);
   const years = b.looks.length > 1
@@ -448,21 +459,18 @@ function townsHtml() {
 // ---- Cargo
 
 function cargoHtml() {
-  const cards = [
-    ["waste", "Waste bins and stops; what a sorting plant leaves.", "Landfills, Waste Incinerator."],
-    ["recyclables", "Recycling bins and stops.", "Sorting Plant."],
-    ["bottom_ash", "Waste Incinerator (not in the tropic climate).", `${BASE.cement.name} (subarctic), ${BASE.bricks.name} (temperate, dry).`],
-    ["scrap", "Sorting Plant.", "Steel mill, instead of iron ore."],
-    ["cullet", "Sorting Plant.", "Glass works, instead of sand."],
-    ["plastic", "Sorting Plant (the game's own plastic).", "Tool factory, machine factory."],
-    ["waste_paper", "Sorting Plant, subarctic only.", "Paper mill, instead of sawdust."],
+  const rows = [
+    ["waste", "Waste bins and stops, recycling bins and stops, Sorting Plant", "Landfills, Waste Incinerator", ""],
+    ["recyclables", "Recycling bins and stops", "Sorting Plant", "From 1970"],
+    ["bottom_ash", "Waste Incinerator", `${BASE.cement.name}, ${BASE.bricks.name}`, "Instead of stone or clay. Cement plant: subarctic; brick works: temperate, dry. Not made in the tropic climate."],
+    ["scrap", "Sorting Plant", "Steel mill", "Instead of iron ore; coal still needed"],
+    ["cullet", "Sorting Plant", "Glass works", "Instead of sand"],
+    ["plastic", "Sorting Plant", "Tool factory, machine factory", "The game's own plastic"],
+    ["waste_paper", "Sorting Plant", "Paper mill", "Instead of sawdust. Subarctic and all industries only."],
   ];
-  return `<div class="cargo-grid">${cards.map(([id, from, to]) => {
-    const why = missing(CARGO[id]);
-    return `<div class="cargo-card"><h3>${img("cargo:" + id)}${CARGO[id].name}</h3>
-      <div class="${why ? "off" : ""}"><p><span class="label">From</span> ${from}</p><p><span class="label">To</span> ${to}</p></div>
-      ${why ? `<small>${why === "not in this climate" ? "Not in this climate." : `From ${CARGO[id].from}.`}</small>` : ""}</div>`;
-  }).join("")}</div>`;
+  return `<div class="table-scroll"><table class="cargo-table"><thead><tr><th>Cargo</th><th>Loaded at</th><th>Taken by</th><th>Notes</th></tr></thead><tbody>${
+    rows.map(([id, from, to, note]) => `<tr${missingInClimate(CARGO[id]) ? ' class="off"' : ""}><td><span class="recipe">${img("cargo:" + id)}${CARGO[id].name}</span></td><td>${from}</td><td>${to}</td><td>${note}</td></tr>`).join("")
+  }</tbody></table></div>`;
 }
 
 const GEAR = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1L11 21h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>';
@@ -496,17 +504,57 @@ function settingsHtml() {
     </div>`;
 }
 
+// ---- Something isn't working
+
+function troubleHtml() {
+  const cases = [
+    ["A truck does not load at a bin", [
+      "The truck can carry bulk or universal cargo.",
+      "The line stops on the bin's side of the street: a bin serves one side only.",
+      "A new bin starts collecting within two game days.",
+      "Buildings are within reach: the bin's window shows its waste a year. Each building counts only for its nearest bin.",
+      "A plain waste bin never gives recyclables; that takes a recycling bin.",
+    ]],
+    ["A recycling bin stopped filling", [
+      "It has two stores, waste and recyclables. When either is full, the bin stops: collect both.",
+      "Recyclables go to a sorting plant, waste to a landfill or the incinerator.",
+    ]],
+    ["The sorting plant stopped", [
+      "Every product has to be hauled away, the leftover waste too: when one store is full, sorting stops.",
+      "Scrap to a steel mill, cullet to glass works, plastic to tool or machine factories, recovered paper to a paper mill (subarctic and all industries), waste to a landfill or the incinerator.",
+    ]],
+    ["The incinerator stopped", [
+      "Waste keeps coming in.",
+      "Outside the tropic climate: bottom ash is hauled to a cement plant or brick works; a full store of 400 stops the burning.",
+    ]],
+    ["I cannot demolish the landfill", [
+      "A landfill holding waste is locked until the waste has disappeared. It disappears slowly; workers speed it up.",
+    ]],
+    ["Bins are built, but the town still grows slowly", [
+      `Some buildings are more than ${MOD.binReach} m from any bin: the Waste card shows the coverage.`,
+      "Lost reputation comes back slowly, over months.",
+      "Full bins pollute the town: empty them more often.",
+    ]],
+    ["I cannot find the incinerator or the recycling", [
+      "Waste Incinerator from 1925, recycling bins and the sorting plant from 1970, all under Road → Waste.",
+    ]],
+  ];
+  return `<div class="trouble">${cases.map(([title, checks]) => `<section class="sec know"><h3>${title}</h3><ul>${checks.map(c => `<li>${c}</li>`).join("")}</ul></section>`).join("")}</div>`;
+}
+
 // ---- Parts of the guide, shown as tiles on the left
 
 const PARTS = [
-  { id: "quickstart", name: "Quickstart", pitch: "What the mod does, and five steps to start.", mark: "1", html: quickstartHtml },
+  { id: "quickstart", name: "Quickstart", pitch: "What the mod does, and your first collection route.", mark: "1", html: quickstartHtml },
   { id: "chains", name: "Chains", pitch: "Where each cargo comes from and goes.", icon: "cargo:waste", glyph: true, html: chainsHtml,
-    lead: "Faded: not built yet in the chosen year, or missing in the chosen climate." },
+    lead: "Faded: missing in the chosen climate." },
   { id: "buildings", name: "Buildings", pitch: "Bins, landfills, the incinerator, the sorting plant.", icon: "build:incinerator", html: buildingsHtml,
     lead: "All in the build menu under Road → Waste." },
   { id: "towns", name: "Towns and waste", pitch: "What towns expect, and what happens if not.", icon: "build:waste_stop_new", html: townsHtml },
   { id: "cargo", name: "Cargo", pitch: "Six new cargos and who takes them.", icon: "cargo:recyclables", glyph: true, html: cargoHtml,
     lead: "Any bulk or universal truck, wagon or ship carries them." },
+  { id: "trouble", name: "Something isn't working", pitch: "What to check when trucks, bins or plants stop.", mark: "?", html: troubleHtml,
+    lead: "Find what you see, then go through the checks." },
   { id: "settings", name: "Settings", pitch: "What each setting changes.", mark: GEAR, html: settingsHtml,
     lead: "Mod settings: the gear icon next to the mod in the mod list." },
 ];
@@ -544,7 +592,8 @@ function render() {
 function show(part, buildingId) {
   state.part = part;
   if (buildingId) state.open = buildingId;
-  history.replaceState(null, "", "#" + (part === "buildings" ? "b-" + state.open : part));
+  const hash = "#" + (part === "buildings" ? "b-" + state.open : part);
+  if (location.hash !== hash) history.pushState(null, "", hash);
   render();
   const detail = el("detail");
   const top = detail.getBoundingClientRect().top;
@@ -581,12 +630,18 @@ el("detail").addEventListener("click", e => {
 const bar = document.querySelector(".settings");
 new ResizeObserver(() => document.documentElement.style.setProperty("--bar-h", bar.offsetHeight + "px")).observe(bar);
 
-const fromHash = location.hash.slice(1);
-if (fromHash.startsWith("b-") && building(fromHash.slice(2))) {
-  state.part = "buildings";
-  state.open = fromHash.slice(2);
-} else if (PARTS.some(p => p.id === fromHash)) {
-  state.part = fromHash;
+// The part (and building) named in the address: #chains, #b-sorting_plant, ...
+function readHash() {
+  const hash = location.hash.slice(1);
+  if (hash.startsWith("b-") && building(hash.slice(2))) {
+    state.part = "buildings";
+    state.open = hash.slice(2);
+  } else {
+    state.part = PARTS.some(p => p.id === hash) ? hash : PARTS[0].id;
+  }
 }
+window.addEventListener("popstate", () => { readHash(); render(); });
+
+readHash();
 render();
 </script>
