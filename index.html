@@ -191,6 +191,11 @@ footer p { margin: 0 0 0.4rem; max-width: 48rem; }
 .site-nav a[aria-current="page"] { opacity: 1; font-weight: 600; }
 .site-nav .home { font-family: var(--display); font-weight: 700; letter-spacing: 0.04em; opacity: 1; margin-right: auto; }
 
+/* Badge of a mod that is not released yet (overview card, guide header). */
+.soon { display: inline-block; padding: 0.2em 0.6em; border-radius: 6px; background: #f3b034; color: #1b1f26;
+  font-family: var(--display); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase;
+  line-height: 1.2; vertical-align: middle; }
+
 /* Changelog at the end of a mod page: one folding block per version, the newest open. */
 .changelog { margin-top: 2.5rem; }
 .changelog h2 { font-family: var(--display); font-size: 1.3rem; margin: 0 0 0.75rem; }
@@ -211,6 +216,8 @@ footer p { margin: 0 0 0.4rem; max-width: 48rem; }
 .mod-card .text { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem 1rem; flex-wrap: wrap; padding: 1rem 1.25rem 1.2rem; }
 .mod-card h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.8rem, 4vw, 2.3rem); line-height: 1; margin: 0; }
 .mod-card p { margin: 0; color: var(--muted); font-size: 1.05rem; }
+.mod-card .pic { position: relative; }
+.mod-card .pic .soon { position: absolute; top: 0.9rem; left: 0.9rem; font-size: 1rem; box-shadow: 0 2px 8px rgb(0 0 0 / 0.35); }
 </style>
 </head>
 <body>
@@ -230,7 +237,7 @@ footer p { margin: 0 0 0.4rem; max-width: 48rem; }
     <div class="text"><h2>Subsidies+</h2><p>20 new subsidies</p></div>
   </a>
   <a class="mod-card" href="./waste-industry/">
-    <img src="./images/waste-industry.webp" alt="" width="1280" height="720">
+    <div class="pic"><img src="./images/waste-industry.webp" alt="" width="1280" height="720"><span class="soon">Coming soon</span></div>
     <div class="text"><h2>Waste Industry</h2><p>Waste bins, landfills, incineration, recycling</p></div>
   </a>
 </main>

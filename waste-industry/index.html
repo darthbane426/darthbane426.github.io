@@ -191,6 +191,11 @@ footer p { margin: 0 0 0.4rem; max-width: 48rem; }
 .site-nav a[aria-current="page"] { opacity: 1; font-weight: 600; }
 .site-nav .home { font-family: var(--display); font-weight: 700; letter-spacing: 0.04em; opacity: 1; margin-right: auto; }
 
+/* Badge of a mod that is not released yet (overview card, guide header). */
+.soon { display: inline-block; padding: 0.2em 0.6em; border-radius: 6px; background: #f3b034; color: #1b1f26;
+  font-family: var(--display); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase;
+  line-height: 1.2; vertical-align: middle; }
+
 /* Changelog at the end of a mod page: one folding block per version, the newest open. */
 .changelog { margin-top: 2.5rem; }
 .changelog h2 { font-family: var(--display); font-size: 1.3rem; margin: 0 0 0.75rem; }
@@ -309,7 +314,7 @@ footer a { color: inherit; }
 <header class="top wrap">
   <div class="brand">
     <h1 aria-label="Waste Industry Docs"><span class="logo" aria-hidden="true"><img id="logo-mark" alt=""></span><span aria-hidden="true">Waste Industry<span class="docs">Docs</span></span></h1>
-    <p class="tagline">Transport Fever 3 mod: street waste bins, landfills, an incinerator and recycling.</p>
+    <p class="tagline"><span class="soon">Coming soon</span> Transport Fever 3 mod: street waste bins, landfills, an incinerator and recycling.</p>
   </div>
 </header>
 
