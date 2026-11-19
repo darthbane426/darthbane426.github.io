@@ -13,18 +13,13 @@ the new subsidies, then "Tweaks and bug fixes" with a link to the page.
 - Railway Settlement: a new town halfway along your train line between two towns; help it grow into a Hamlet in five years and carry passengers by train between it and each town.
 
 ### Settlements
-- A settlement offer puts a survey tripod with a flag on the spot of the new town; the offer shows in the top bar and takes the camera there.
-- Workers' Settlement: the offer already shows arrows from the site of the new town to the industries its residents will work at.
-- Island, Mountain, Fishing, Farm and Railway Settlement get fitting names from the map's town-name list, such as "Port Reading"; Workers' Settlement is named after its industries' town, such as "New Goldville".
-- Island, Mountain, Fishing, Farm and Railway Settlement found the town only on the site with the flag. When that site is blocked, the subsidy ends without a fine and the next site comes as a new offer with its own flag.
 - Settlements no longer come in the normal subsidy rounds: one shared timer offers one at a time, every 36, 24, 12 or 6 months by the game's subsidy setting (×1.5 on Rare, ×⅔ on Often). A site comes back after 60 months at the earliest.
 - New setting "Settlement subsidies": Off switches every settlement type off, whatever their own switches say.
-- The money of the settlements follows how hard they are: Mountain and Island get the most, Railway, Fishing and Workers' Settlement a quarter less, Farm 40 % less. A third of it comes on acceptance, for the road or line to the new town. On failure it goes back and the fine is three quarters of the whole reward, as the town stays either way. When no site takes the town, only the upfront money goes back.
-- Mountain Settlement: the mine stands on flat ground up by the town, not in the valley.
-- Mountain and Farm Settlement: the mines and farms start with a few fields and grow like the game's own industries, instead of standing fully expanded from the start.
-- Workers' Settlement: 30 to 45 months to fulfil instead of 24 to 36, and the money scheme of the other settlements: half again as much money, a third upfront, and a fine of three quarters of the reward instead of over three times it; on failure it takes reputation only in the new town (new offers).
-- A founded settlement gives 20 to 40 % reputation in the new town when the subsidy is fulfilled and takes 50 to 100 % there when it fails.
-- The settlement subsidies share one new icon (houses with a plus, the type below); Workers' Settlement gets it too.
+- A settlement offer puts a survey tripod with a flag on the spot of the new town; the offer shows in the top bar and takes the camera there.
+- Workers' Settlement: the offer shows arrows from the site of the new town to the industries its residents will work at.
+- Workers' Settlement: the new town is named after its industries' town, such as "New Goldville".
+- Workers' Settlement: 30 to 45 months to fulfil instead of 24 to 36. Half again as much money, a third of it upfront, and a fine of three quarters of the reward instead of over three times it. 20 to 40 % reputation in the new town when fulfilled; on failure it takes 50 to 100 % there and nothing in the nearest town (new offers).
+- Workers' Settlement: a new icon (houses with a plus), shared with the new settlements.
 
 ### Other changes
 - Subsidies+ types come up a bit more often on every frequency setting.
