@@ -25,7 +25,7 @@ def main():
         buffer = io.BytesIO()
         image.save(buffer, "PNG", optimize=True)
         icons[tga.parent.name] = "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode()
-    out.write_text("const ICONS = " + json.dumps(icons, indent=0) + ";\n", encoding="utf-8")
+    out.write_text("const ICONS = " + json.dumps(icons, indent=0) + ";\n", encoding="utf-8", newline="\n")
     print(f"{len(icons)} icons -> {out}")
 
 

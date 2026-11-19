@@ -190,6 +190,15 @@ footer p { margin: 0 0 0.4rem; max-width: 48rem; }
 .site-nav a:hover, .site-nav a:focus-visible { opacity: 1; text-decoration: underline; }
 .site-nav a[aria-current="page"] { opacity: 1; font-weight: 600; }
 .site-nav .home { font-family: var(--display); font-weight: 700; letter-spacing: 0.04em; opacity: 1; margin-right: auto; }
+
+/* Changelog at the end of a mod page: one folding block per version, the newest open. */
+.changelog { margin-top: 2.5rem; }
+.changelog h2 { font-family: var(--display); font-size: 1.3rem; margin: 0 0 0.75rem; }
+.changelog details { border-top: 1px solid var(--rule); padding: 0.5rem 0; }
+.changelog summary { cursor: pointer; font-family: var(--display); font-weight: 600; font-size: 1.05rem; }
+.changelog h4 { margin: 0.75rem 0 0.25rem; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.changelog ul { margin: 0.25rem 0 0.5rem; padding-left: 1.25rem; }
+.changelog li { margin: 0.2rem 0; line-height: 1.45; }
 /* Overview: one large panel per mod, its picture on top, linking to its guide. */
 .brand h1 .docs { color: var(--muted); font-weight: 600; margin-left: 0.25em; }
 .mods { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: 1.25rem; padding-block: 1rem 3rem; }
@@ -218,7 +227,7 @@ footer p { margin: 0 0 0.4rem; max-width: 48rem; }
 <main class="wrap mods">
   <a class="mod-card" href="./subsidies-plus/">
     <img src="./images/subsidies-plus.webp" alt="" width="1280" height="720">
-    <div class="text"><h2>Subsidies+</h2><p>15 new subsidies</p></div>
+    <div class="text"><h2>Subsidies+</h2><p>20 new subsidies</p></div>
   </a>
   <a class="mod-card" href="./waste-industry/">
     <img src="./images/waste-industry.webp" alt="" width="1280" height="720">

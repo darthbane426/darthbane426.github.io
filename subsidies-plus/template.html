@@ -37,6 +37,8 @@
 .time-limit .tip-btn { color: inherit; }
 .lanes-sign { display: inline-flex; gap: 3px; vertical-align: -0.1em; margin-right: 0.35rem; }
 .lanes-sign span { width: 4px; height: 0.95rem; background: var(--task); border-radius: 1px; }
+.help pre { margin: 0.5rem 0; padding: 0.75rem 1rem; overflow-x: auto; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; font-size: 0.85rem; }
+.help .note { display: block; color: var(--muted); font-size: 0.85rem; }
 </style>
 
 <!--SITE_NAV-->
@@ -44,7 +46,7 @@
 <header class="top wrap">
   <div class="brand">
     <h1 aria-label="Subsidies+ Docs"><span class="logo" aria-hidden="true">S</span><span aria-hidden="true">ubsidies<span class="plus">+</span><span class="docs">Docs</span></span></h1>
-    <p class="tagline">Transport Fever 3 mod that adds 15 new subsidies to the game.</p>
+    <p class="tagline">Transport Fever 3 mod that adds 20 new subsidies to the game.</p>
   </div>
   <p class="intro">Open a subsidy to see when it is offered, what you have to do, and what you get or lose. Set your difficulty and game year above the list; the amounts follow the mod's own formulas.</p>
 </header>
@@ -79,6 +81,15 @@
   <div class="tiles" id="tiles"></div>
   <article class="detail" id="detail" aria-live="polite"></article>
 </main>
+
+<section class="wrap changelog help" id="help">
+  <h2>Help</h2>
+  <p>A subsidy that can no longer be done can be removed without a fine in the game console:</p>
+  <pre><code>api.cmd.sendCommand(api.cmd.makeScriptingSendEventCmd("", "Subvention", "_debugDespawn", { index = 1 }))</code></pre>
+  <span class="note">index = the subsidy's place in your list of accepted subsidies, from the top.</span>
+</section>
+
+<!--CHANGELOG-->
 
 <footer class="wrap">
   <p>Subsidies+ is in beta and the numbers are still being tuned.</p>
@@ -156,6 +167,11 @@ const TYPES = [
   { id: "intercity_express", rank: "Coordinator", name: "Non-stop Express", pitch: "Two distant towns want a non-stop train.", rules: expressRules },
   { id: "highway_concession", rank: "Coordinator", name: "Highway Concession", pitch: "Two distant towns want a highway.", rules: highwayRules, extra: highwayExtra },
   { id: "industry_partnership", rank: "Mechanic", name: "Industry Partnership", pitch: "A factory nobody serves offers a deal.", rules: partnershipRules },
+  { id: "island_town", rank: "Coordinator", name: "Island Settlement", pitch: "Founds a new town on an empty island.", rules: islandRules },
+  { id: "mountain_town", rank: "Coordinator", name: "Mountain Settlement", pitch: "A mining town high in the mountains.", rules: mountainRules },
+  { id: "fishing_town", rank: "Coordinator", name: "Fishing Settlement", pitch: "A town on the coast by unused fishing grounds.", rules: fishingRules },
+  { id: "farm_town", rank: "Coordinator", name: "Farm Settlement", pitch: "A farming town on open plains, with two farms.", rules: farmRules },
+  { id: "junction_town", rank: "Coordinator", name: "Railway Settlement", pitch: "A new town halfway along a railway.", rules: junctionRules },
 ].sort((a, b) => a.name.localeCompare(b.name, "en"));
 
 const state = { ...MOD.presets[1], year: 1920, open: TYPES[0].id };
@@ -191,6 +207,7 @@ const steps = (a, b, share = 1) => money(stepsToMoney(a) * share, stepsToMoney(b
 const n = v => `<span class="num">${fmtInt(v)}</span>`;
 // The contract time, shown as its own row at the end of the task block.
 const timeLimit = (a, b, note) => ({ time: a === b ? `${a} months` : `${a}–${b} months`, note });
+const timeYears = (months, note) => ({ time: years(months), note });
 const pct = v => `${Math.round(v * 100)} %`;
 const byRisk = table => table[state.risk];
 const years = m => m % 12 === 0 ? `${m / 12} year${m === 12 ? "" : "s"}` : `${m} months`;
@@ -242,6 +259,7 @@ const TIP = {
   risk: "The game's subsidy risk setting. A higher risk asks for bigger targets.",
   pollution: "The game's pollution scale, which runs from 60 to 74 dB.",
   booster: "Extra supplies that raise its production, listed under Boosters in the industry window.",
+  timer: "One timer in game time for all settlement types. The Subsidies+ frequency stretches it: 1.5 times as long on Rare, two thirds on Often. When no type finds a site, it tries again after 1, 2, 4, 8 and 16 months. It rests while the game's subsidies are paused. The mod setting Settlement subsidies: Off switches every settlement off.",
 };
 // An (i) button that shows text on hover, focus or tap; end: opens to the left, for buttons near the right edge.
 const tip = (text, end) => `<span class="tip${end ? " end" : ""}"><button type="button" class="tip-btn" aria-label="Explain">i</button><span class="tip-text" role="tooltip">${text}</span></span>`;
@@ -379,8 +397,8 @@ function regionalRules() {
       "The same group comes back at most once per game year.",
     ],
     accept: [
-      `With a money reward: a third of it now, ${steps(50, 150, 1 / 3)} or ${steps(27, 67, 1 / 3)}, the rest when fulfilled`,
-      `With income only: ${steps(20, 50)} now, yours to keep when fulfilled`,
+      `With a money reward: a third of it now, ${steps(50, 150, 0.5)} or ${steps(27, 67, 0.5)}, the rest when fulfilled`,
+      `With income only: ${steps(30, 75)} now, yours to keep when fulfilled`,
     ],
     task: [
       "Join all towns by passenger lines. Transfers are allowed, inside the group's towns.",
@@ -389,7 +407,7 @@ function regionalRules() {
       "Trips count only while all towns are joined.",
       timeLimit(23, 38),
     ],
-    complete: [...rewardVariants("base", "on rides between the towns", { xp: null }), XP_EACH],
+    complete: [...rewardVariants("base", "on rides between the towns", { share: 1.5, xp: null }), XP_EACH],
     completeNote: "One of the three money or income sets, minus the upfront money; the level progress comes with every set.",
     failure: [
       "You repay the upfront money",
@@ -433,7 +451,7 @@ function ecoRules() {
 function railRules() {
   return {
     offer: [
-      "Two neighbouring towns, one among the three nearest of the other.",
+      "Two neighbouring towns with at least 200 residents each, one among the three nearest of the other.",
       "Your bus line links them, no train does.",
       "The same pair comes back at most once per game year.",
     ],
@@ -465,8 +483,11 @@ function tramRules() {
       "Each boarding counts, so a return trip counts twice.",
       timeLimit(18, 30),
     ],
-    complete: rewardVariants("base", "on rides within the town on the tram lines"),
-    completeNote: "One of the three, picked at random per offer.",
+    complete: [choice(
+      both("2× income on rides within the town on the tram lines for 5 years", XP_TOWN),
+      both(steps(18, 53), "2× income on rides within the town on the tram lines for 2 years", XP_TOWN),
+    )],
+    completeNote: "One of the two, picked at random per offer.",
     failure: [`${steps(40, 80)} fine`, "−10 to −50 % reputation in the town"],
   };
 }
@@ -478,12 +499,13 @@ function expansionRules() {
     offer: [
       "You ship goods from an industry that can still grow a level. Any type of industry.<small>Your lines pick up its production.</small>",
       `At least one of its boosts is not running yet.<small>A booster good${tip(TIP.booster)} it can use is missing, or fewer than half of its workplaces are filled by workers coming by your lines.</small>`,
+      "Every booster good it uses is made by some industry on the map, running or not.<small>The mod builds no producer.</small>",
       "There is room for one more building or field next to it.",
       "This industry has not been offered the subsidy at its current level yet.<small>One offer per industry and level per game, whether you accept it, decline it or let it expire. After the industry grows, the next level can be offered.</small>",
     ],
     task: [
       "All its boosts run at the same time.<small>Every booster good is in stock or was delivered recently, as the tick in the industry window shows. If the industry has workplaces, at least half of them are filled by workers who came by your lines within the last 2 years, from any town.</small>",
-      "One daily check with everything running is enough.",
+      "One daily check with everything running is enough.<small>The task row shows the booster goods, with a workers icon when workers count too.</small>",
       timeLimit(12, 24),
     ],
     complete: [
@@ -504,7 +526,7 @@ function trafficRules() {
       "The same town comes back at most once per game year.",
     ],
     task: [
-      "Raise the town's traffic rating by 20 points over the rating when the offer was made.",
+      "Raise the town's traffic rating by 20 points over the rating when the offer was made, at most to 90 %.",
       "Keep it there for 90 days in a row. The rating is read every 5 days and averaged over the last readings; one reading below the target starts the 90 days again.",
       timeLimit(24, 36),
     ],
@@ -514,40 +536,178 @@ function trafficRules() {
   };
 }
 
+// ---- Settlements: shared rules (subsidies_plus_towns.lua)
+
+const SETTLEMENT_TIMER = `One settlement offer at a time${tip(TIP.timer)}.<small>Every 36, 24, 12 or 6 months by the game's subsidy setting; the type offered least so far comes first.</small>`;
+const SETTLEMENT_PAUSE = "A site offered before comes back 60 months later at the earliest.";
+const SETTLEMENT_FLAG = "A survey tripod with a flag marks the site while the offer is open.";
+const SETTLEMENT_BLOCKED = "Flagged site blocked: the subsidy ends without a fine, you repay only the upfront money, and the next site comes as a new offer to accept.";
+const settlementTarget = level => `Help the settlement grow into a ${level}.<small>A town the game founds at that level already has to grow one more.</small>`;
+
+// Money of a founded settlement: 60–140 steps times the type's difficulty factor, a third of it on acceptance; the
+// fine is three quarters of the whole reward.
+const settlementSteps = (factor, share = 1) => steps(Math.floor(60 * factor), Math.floor(140 * factor), share);
+const settlementUpfront = factor => `Upfront money: a third of the money reward, ${settlementSteps(factor, 1 / 3)}`;
+function settlementComplete(factor) {
+  return [
+    `The rest of ${settlementSteps(factor)}`,
+    "20–100 % level progress in the settlement",
+    "20–40 % reputation in the settlement",
+    "The settlement stays and grows.",
+  ];
+}
+const settlementFailure = factor => [
+  "You repay the upfront money",
+  `${settlementSteps(factor, 0.75)} fine<small>Three quarters of the whole money reward, as the settlement stays.</small>`,
+  "−50 to −100 % reputation in the settlement",
+  "The settlement stays.",
+];
+const SETTLEMENT_QUARTER_LESS = "A quarter less money than Island and Mountain, the hardest settlements.";
+
 // ---- Workers' Settlement
 
 function settlementRules() {
   return {
     offer: [
+      SETTLEMENT_TIMER,
       "2 to 4 industries with workplaces, all within 1.5 km of one of them.",
       "The middle of the group is at least 2 km from the centre of every town.",
       "At least one of them lacks workers.",
       "There is a site for the new town.<small>Flat and dry, within 1.2 km of the group's middle, at least 250 m from the industries and 1.5 km from the map edge.</small>",
-      "An industry that started an offer does not start another one in the same game year.",
+      "A group offered before comes back 60 months later at the earliest.",
+      `${SETTLEMENT_FLAG}<small>Arrows show the industries its residents will work at.</small>`,
     ],
     accept: [
-      "A new town is founded next to the industries, asking for one commercial and one industrial good.",
-      `Upfront money: 20–40 % of the money reward, ${money(stepsToMoney(30) * 0.2, stepsToMoney(70) * 0.4)}`,
+      "A new town is founded by the flag, asking for one commercial and one industrial good.<small>If it does not fit there, the next flattest of up to 5 sites around the industries is tried. Named after the industries' town, such as New Goldville.</small>",
+      settlementUpfront(0.75),
     ],
     task: [
       "Residents of the settlement working at every industry at the same time: half the workplaces of each, coming by your lines.",
       "Workers from other towns do not count.",
       "One daily check with all of them at once is enough.",
-      timeLimit(24, 36),
+      timeLimit(30, 45),
     ],
-    complete: [
-      `The rest of ${steps(30, 70)}`,
-      "20–100 % level progress in the settlement",
-      "The settlement stays and grows.",
-    ],
-    completeNote: DIFFICULTY_FREE,
-    failure: [
-      "You repay the upfront money",
-      `${steps(120, 240)} fine`,
-      "−100 % reputation in the settlement and in the nearest town",
-      "The settlement stays.",
-    ],
+    complete: settlementComplete(0.75),
+    completeNote: `${SETTLEMENT_QUARTER_LESS} ${DIFFICULTY_FREE}`,
+    failure: settlementFailure(0.75),
     failureNote: "If no town could be founded, the contract ends and you only repay the upfront money.",
+  };
+}
+
+// ---- Island Settlement
+
+function islandRules() {
+  return {
+    offer: [
+      SETTLEMENT_TIMER,
+      "An island of 0.2 to 20 km² without a town.",
+      SETTLEMENT_PAUSE,
+      SETTLEMENT_FLAG,
+    ],
+    accept: ["The island settlement is founded on the flagged site.<small>Mostly residential.</small>", settlementUpfront(1)],
+    task: [settlementTarget("Large Hamlet"), timeYears(120)],
+    complete: settlementComplete(1),
+    completeNote: DIFFICULTY_FREE,
+    failure: settlementFailure(1),
+    failureNote: SETTLEMENT_BLOCKED,
+  };
+}
+
+// ---- Mountain Settlement
+
+function mountainRules() {
+  return {
+    offer: [
+      SETTLEMENT_TIMER,
+      "The economy has coal or iron ore mines.",
+      "A flat site among the highest 15 % of the land, with a drop of 150 m around it.<small>At least 1 km from towns and 800 m from industries.</small>",
+      "Room for a mine nearby.<small>A flat spot 0.5 to 2.5 km away over land, at least 500 m from every industry.</small>",
+      SETTLEMENT_PAUSE,
+      SETTLEMENT_FLAG,
+    ],
+    accept: [
+      "The mining settlement is founded on the flagged site, with a coal or iron ore mine nearby.<small>Mostly industrial.</small>",
+      "Half of them get a second mine if there is room.<small>The mines start with a few fields and grow like the game's own.</small>",
+      "The game does not close the new mines while the contract runs.",
+      settlementUpfront(1),
+    ],
+    task: [settlementTarget("Hamlet"), timeYears(84)],
+    complete: settlementComplete(1),
+    completeNote: DIFFICULTY_FREE,
+    failure: settlementFailure(1),
+    failureNote: "Flagged site blocked, or no room for the first mine: the subsidy ends without a fine, you repay only the upfront money, and the next site comes as a new offer to accept.",
+  };
+}
+
+// ---- Fishing Settlement
+
+function fishingRules() {
+  return {
+    offer: [
+      SETTLEMENT_TIMER,
+      "Fishing grounds whose fish nobody ships, at least 3 km from every town.",
+      "A flat site on the coast within 3 km of them.",
+      SETTLEMENT_PAUSE,
+      SETTLEMENT_FLAG,
+    ],
+    accept: ["The fishing settlement is founded on the flagged shore.<small>Largest district: commercial.</small>", "It asks for fish from the start.<small>In place of one of the two goods a new town asks for first.</small>", settlementUpfront(0.75)],
+    task: [settlementTarget("Large Hamlet"), timeYears(120)],
+    complete: settlementComplete(0.75),
+    completeNote: `${SETTLEMENT_QUARTER_LESS} ${DIFFICULTY_FREE}`,
+    failure: settlementFailure(0.75),
+    failureNote: SETTLEMENT_BLOCKED,
+  };
+}
+
+// ---- Farm Settlement
+
+function farmRules() {
+  return {
+    offer: [
+      SETTLEMENT_TIMER,
+      "The economy has crop farms.",
+      "A flat site in the lowest half of the land.<small>At least 1.5 km from towns and 800 m from industries.</small>",
+      "Room for two farms nearby.<small>0.6 to 2.5 km away over land, 700 m from each other and from every industry.</small>",
+      SETTLEMENT_PAUSE,
+      SETTLEMENT_FLAG,
+    ],
+    accept: [
+      "The farming settlement is founded on the flagged site, with two new farms nearby.<small>Largest district: commercial. A crop farm and a second farm of any kind the economy has. They start with a few fields and grow like the game's own.</small>",
+      "It asks for vegetables from the start.<small>In economies with vegetables.</small>",
+      "The game does not close the new farms while the contract runs.",
+      settlementUpfront(0.6),
+    ],
+    task: [settlementTarget("Large Hamlet"), timeYears(84)],
+    complete: settlementComplete(0.6),
+    completeNote: `40 % less money than Island and Mountain: the easiest settlement. ${DIFFICULTY_FREE}`,
+    failure: settlementFailure(0.6),
+    failureNote: "Flagged site blocked, or no room for the crop farm: the subsidy ends without a fine, you repay only the upfront money, and the next site comes as a new offer to accept.",
+  };
+}
+
+// ---- Railway Settlement
+
+function junctionRules() {
+  return {
+    offer: [
+      SETTLEMENT_TIMER,
+      "Two towns with at least 350 residents each, at least 7 km apart.",
+      "One of your passenger train lines serves both.",
+      "A site beside their railway, roughly halfway.<small>30–70 % of the way, 150–300 m from the track, 300 m from railway bridges and tunnels, 2 km from towns and 800 m from industries.</small>",
+      SETTLEMENT_PAUSE,
+      SETTLEMENT_FLAG,
+    ],
+    accept: ["The railway settlement is founded on the flagged site.<small>Largest district: commercial.</small>", settlementUpfront(0.75)],
+    task: [
+      settlementTarget("Hamlet"),
+      `Carry passengers by train between the settlement and each of the two towns.<small>For each town ${ridesTarget([0.05, 0.1, 0.15, 0.2], 30, 400, "its residents")}.</small>`,
+      "Each ride between the settlement and a town counts for that town, in either direction.<small>A train line through the settlement from one town to the other serves both; a passenger riding through from one town to the other counts for neither.</small>",
+      timeYears(60),
+    ],
+    complete: settlementComplete(0.75),
+    completeNote: `${SETTLEMENT_QUARTER_LESS} ${DIFFICULTY_FREE}`,
+    failure: settlementFailure(0.75),
+    failureNote: `${SETTLEMENT_BLOCKED} If one of the two towns disappears, the subsidy ends without a fine; the settlement and the upfront money stay.`,
   };
 }
 
@@ -560,7 +720,7 @@ function marketRules() {
     offer: [
       "An industry makes goods that no town in its region asks for: its nearest town and the two next ones.",
       "A town of the region would ask for that kind of goods at its next level.<small>The district must ask for fewer than three kinds of goods.</small>",
-      "The offer names the town that gets the demand.",
+      "The offer names the town that gets the demand, and of several industries making the goods the one nearest to it.",
       "One New Market per town at a time; each town and goods at most once per game year.",
     ],
     accept: ["A new demand for the goods appears in the town.<small>One of its districts (residential, commercial or industrial, by kind of goods) starts asking for them, shown in the town window like any other demand.</small>"],
