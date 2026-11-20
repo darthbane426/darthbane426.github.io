@@ -4,6 +4,10 @@ The full changelog, shown on https://darthbane426.github.io/subsidies-plus/#chan
 file; the "Unreleased" section stays off the page until it gets its version number). The mod.io changelog is short:
 the new subsidies, then "Tweaks and bug fixes" with a link to the page.
 
+## 1.3.1
+### Fixes
+- Workers' Settlement: the new town is founded big enough for its industries, and the workers it has to send follow its size: at most half of its residents in all, shared by the industries and fixed once the town has residents. Running contracts get their numbers on the next check.
+
 ## 1.3.0
 ### New subsidies
 - Island Settlement: a new mostly residential settlement on an empty island; ten years to grow into a Large Hamlet.

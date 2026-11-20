@@ -574,11 +574,11 @@ function settlementRules() {
       `${SETTLEMENT_FLAG}<small>Arrows show the industries its residents will work at.</small>`,
     ],
     accept: [
-      "A new town is founded by the flag, asking for one commercial and one industrial good.<small>If it does not fit there, up to 4 more sites nearby are tried.</small>",
+      "A new town is founded by the flag, asking for one commercial and one industrial good.<small>About 2 residents for each worker the industries need. If it does not fit there, up to 4 more sites nearby are tried.</small>",
       settlementUpfront(0.75),
     ],
     task: [
-      "Half the workplaces of every industry filled at once by settlement residents coming by your lines.<small>One daily check is enough.</small>",
+      "Settlement residents working at every industry at once, coming by your lines.<small>Each industry asks for up to half its workplaces, at most half the settlement's residents in all, fixed once the town has residents. One daily check is enough.</small>",
       timeLimit(30, 45),
     ],
     complete: settlementComplete(0.75),
