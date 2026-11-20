@@ -7,6 +7,7 @@ the new subsidies, then "Tweaks and bug fixes" with a link to the page.
 ## 1.3.1
 ### Fixes
 - Workers' Settlement: the new town is founded big enough for its industries, and the workers it has to send follow its size: at most half of its residents in all, shared by the industries and fixed once the town has residents. Running contracts get their numbers on the next check.
+- Workers' Settlement: the money follows the number of industries: a group of 2 pays 20 % less than one of 3, a group of 4 20 % more; the fine follows it (new offers).
 
 ## 1.3.0
 ### New subsidies

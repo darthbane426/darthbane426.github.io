@@ -543,19 +543,20 @@ const settlementBlocked = (extra = "") => `Site blocked${extra}: no fine, you re
 const settlementTarget = level => `Help the settlement grow into a ${level}.<small>A town founded at that level must grow one level more.</small>`;
 
 // Money of a founded settlement: 60–140 steps times the type's difficulty factor, a third of it on acceptance; the
-// fine is three quarters of the whole reward.
-const settlementSteps = (factor, share = 1) => steps(Math.floor(60 * factor), Math.floor(140 * factor), share);
+// fine is three quarters of the whole reward. maxFactor: the factor of the top of the range, when it varies by offer.
+const settlementSteps = (factor, share = 1, maxFactor = factor) =>
+  steps(Math.floor(60 * factor + 1e-6), Math.floor(140 * maxFactor + 1e-6), share);
 const settlementUpfront = factor => `Upfront money: ${settlementSteps(factor, 1 / 3)}`;
-function settlementComplete(factor) {
+function settlementComplete(factor, maxFactor = factor) {
   return [
-    `The rest of ${settlementSteps(factor)}`,
+    `The rest of ${settlementSteps(factor, 1, maxFactor)}`,
     "20–100 % level progress in the settlement",
     "20–40 % reputation in the settlement",
   ];
 }
-const settlementFailure = factor => [
+const settlementFailure = (factor, maxFactor = factor) => [
   "You repay the upfront money",
-  `${settlementSteps(factor, 0.75)} fine`,
+  `${settlementSteps(factor, 0.75, maxFactor)} fine`,
   "−50 to −100 % reputation in the settlement",
   "The settlement stays.",
 ];
@@ -575,15 +576,15 @@ function settlementRules() {
     ],
     accept: [
       "A new town is founded by the flag, asking for one commercial and one industrial good.<small>About 2 residents for each worker the industries need. If it does not fit there, up to 4 more sites nearby are tried.</small>",
-      settlementUpfront(0.75),
+      `Upfront money: ${settlementSteps(0.6, 1 / 3, 0.9)}<small>By the number of industries: 2 of them pay 20 % less than 3, and 4 pay 20 % more.</small>`,
     ],
     task: [
       "Settlement residents working at every industry at once, coming by your lines.<small>Each industry asks for up to half its workplaces, at most half the settlement's residents in all, fixed once the town has residents. One daily check is enough.</small>",
       timeLimit(30, 45),
     ],
-    complete: settlementComplete(0.75),
+    complete: settlementComplete(0.6, 0.9),
     completeNote: DIFFICULTY_FREE,
-    failure: settlementFailure(0.75),
+    failure: settlementFailure(0.6, 0.9),
     failureNote: "No town founded: no fine, you repay the upfront money.",
   };
 }
