@@ -398,7 +398,7 @@ function regionalRules() {
       "The same group comes back at most once per game year.",
     ],
     accept: [
-      `With a money reward: a third of it now, ${steps(50, 150, 0.5)} or ${steps(27, 67, 0.5)}, the rest when fulfilled`,
+      `With a money reward: a third of it now, ${steps(50, 150, 0.5)} or ${steps(27, 67, 0.5)} for 3 towns, ${steps(50, 150, 0.625)} or ${steps(27, 67, 0.625)} for 4, the rest when fulfilled`,
       `With income only: ${steps(30, 75)} now, yours to keep when fulfilled`,
     ],
     task: [
@@ -406,10 +406,10 @@ function regionalRules() {
       `Carry passengers between every pair of towns: 3 pairs for 3 towns, 6 for 4.<small>Each pair has its own target: ${ridesTarget([0.1, 0.25, 0.35, 0.5], 15, 700, "the smaller town's residents × 2 ÷ number of towns")}.</small>`,
       "A trip counts once, for the towns where it starts and ends, however often the passenger changes.",
       "Trips count only while all towns are joined.",
-      timeLimit(23, 38),
+      timeLimit(30, 54, "3 towns 30–42 months, 4 towns 42–54 months"),
     ],
     complete: [...rewardVariants("base", "on rides between the towns", { share: 1.5, xp: null }), XP_EACH],
-    completeNote: "Minus the upfront money.",
+    completeNote: "For 3 towns; 4 towns get a quarter more money. Minus the upfront money.",
     failure: [
       "You repay the upfront money",
       `${steps(60, 100)} fine`,
@@ -485,7 +485,7 @@ function tramRules() {
       both("2× income on rides within the town on the tram lines for 5 years", XP_TOWN),
       both(steps(18, 53), "2× income on rides within the town on the tram lines for 2 years", XP_TOWN),
     )],
-    failure: [`${steps(40, 80)} fine`, "−10 to −50 % reputation in the town"],
+    failure: [`Fine: three quarters of the money, ${steps(18, 53, 0.75)}; with income only ${steps(20, 40)}`, "−10 to −50 % reputation in the town"],
   };
 }
 
@@ -695,7 +695,7 @@ function junctionRules() {
     accept: ["The railway settlement is founded on the flagged site.<small>Largest district: commercial.</small>", settlementUpfront(0.75)],
     task: [
       settlementTarget("Hamlet"),
-      `Carry passengers by train between the settlement and each of the two towns.<small>For each town ${ridesTarget([0.05, 0.1, 0.15, 0.2], 30, 400, "its residents")}.</small>`,
+      `Carry passengers by train between the settlement and each of the two towns.<small>For each town ${ridesTarget([0.05, 0.1, 0.15, 0.2], 30, 400, "the smaller town's residents")}, the same number for both.</small>`,
       "Rides in either direction count.<small>A line from town to town through the settlement serves both; through passengers count for neither.</small>",
       timeYears(60),
     ],
@@ -726,7 +726,7 @@ function marketRules() {
     ],
     complete: [both(steps(30, 80), XP_TOWN), "The new demand stays in the town for good."],
     completeNote: scaledMoney(ref),
-    failure: [`${steps(40, 80)} fine<small>scaled like the reward</small>`, "−10 to −50 % reputation in the town", "The new demand is removed from the town again."],
+    failure: [`${steps(40, 80)} fine<small>scaled like the reward, at most three quarters of it</small>`, "−10 to −50 % reputation in the town", "The new demand is removed from the town again."],
   };
 }
 
@@ -741,7 +741,7 @@ function hubRules() {
     ],
     task: [
       "One station, or stations within 300 m of it, with direct lines to 2–3 other towns (the offer names how many).",
-      `Transfers at the hub.<small>${ridesTarget([0.05, 0.1, 0.15, 0.2], 15, 400, "the town's residents")}.</small>`,
+      `Transfers at the hub.<small>${ridesTarget([0.05, 0.1, 0.15, 0.2], 15, 400, "the residents of the smallest of the 2–3 towns: the towns the hub already reaches, then the nearest")}. Set with the offer; it does not change.</small>`,
       "A transfer: a passenger between two other towns boarding at the hub. Counts only while the hub reaches enough towns.",
       timeLimit(24, 36),
     ],
@@ -761,12 +761,13 @@ function expositionRules() {
       "The same town comes back at most once per game year.",
     ],
     offerNote: "The host is picked at random among the five biggest towns that qualify.",
-    accept: ["A free marketing campaign in the town for the year of the exposition."],
+    accept: ["A free marketing campaign in the town from the day you accept until the exposition closes."],
     task: [
-      `Bring visitors to the town.<small>${ridesTarget([0.1, 0.2, 0.3, 0.4], 60, 1500, "the town's residents")}.</small>`,
+      `Bring visitors to the town.<small>${ridesTarget([0.05, 0.1, 0.15, 0.2], 60, 1500, "the residents of the 6 towns nearest to it together")}.</small>`,
       "From at least 4 other towns, with at least 10 visitors each.",
       "A visitor is a passenger arriving by your lines from another town, counted for the town where the trip started. Each arrival counts.",
-      timeLimit(12, 12, "the exposition runs for one year"),
+      "Visitors count while the exposition is open: from 6 months after you accept, for one year.",
+      timeLimit(18, 18, "6 months to prepare, then the exposition runs for one year"),
     ],
     complete: [both(steps(30, 80), XP_TOWN), "10–20 % reputation in up to 6 towns that sent the most visitors"],
     failure: [`${steps(20, 40)} fine`, "−10 to −40 % reputation in the town"],
