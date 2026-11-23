@@ -14,6 +14,7 @@ the new subsidies, then "Tweaks and bug fixes" with a link to the page.
 - Tram Network and New Market: the fine is at most three quarters of the money reward; Tram Network with income only has half the former fine (new offers).
 - Regional Network: the time follows the number of towns, 30 to 42 months for 3 towns and 42 to 54 for 4; a network of 4 towns pays a quarter more money (new offers).
 - Regional Network: each town pair shows in its bar whether it is connected, instead of a list in the text, so the whole window fits again.
+- Subsidy windows with progress bars scroll when they are taller than the screen, instead of squeezing the window and drawing the time bar upside down.
 
 ## 1.3.0
 ### New subsidies
