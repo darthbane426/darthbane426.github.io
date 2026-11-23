@@ -9,7 +9,7 @@ the new subsidies, then "Tweaks and bug fixes" with a link to the page.
 - Workers' Settlement: the new town is founded big enough for its industries, and the workers it has to send follow its size: at most half of its residents in all, shared by the industries and fixed once the town has residents. Running contracts get their numbers on the next check.
 - Workers' Settlement: the money follows the number of industries: a group of 2 pays 20 % less than one of 3, a group of 4 20 % more; the fine follows it (new offers).
 - Transfer Hub: the transfers it asks for follow the smallest of the towns whose passengers change at the hub (the towns it already reaches, then the nearest), not the hub town; the number is fixed with the offer (new offers).
-- World Exposition: the visitors it asks for follow the residents of the 6 towns nearest the host, where they come from. The exposition opens 6 months after you accept and then runs for one year; the marketing campaign starts on acceptance (new offers).
+- World Exposition: the visitors it asks for follow the residents of the 6 towns nearest the host, where they come from. It runs 18 months instead of 12, time to build the lines; visitors and the marketing campaign count from the day you accept (new offers).
 - Railway Settlement: the train passengers it asks for follow the smaller of the two towns, the same number for each town (new offers).
 - Tram Network and New Market: the fine is at most three quarters of the money reward; Tram Network with income only has half the former fine (new offers).
 - Regional Network: the time follows the number of towns, 30 to 42 months for 3 towns and 42 to 54 for 4; a network of 4 towns pays a quarter more money (new offers).
